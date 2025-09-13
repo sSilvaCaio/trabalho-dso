@@ -1,13 +1,13 @@
 class Motor():
-    def __init__(self, potencia: str, ano: int):
+    def __init__(self, potencia: str, quilometragem: int):
         self.__potencia = None
-        self.__ano = None
+        self.__quilometragem = None
 
         if isinstance(potencia, str):
             self.__potencia = potencia
         
-        if isinstance(ano, int):
-            self.__ano = ano
+        if isinstance(quilometragem, int):
+            self.__quilometragem = quilometragem
     
     @property
     def potencia(self):
@@ -19,10 +19,10 @@ class Motor():
             self.__potencia = potencia
     
     @property
-    def ano(self):
-        return self.__ano
+    def quilometragem(self):
+        return self.__quilometragem
 
-    @potencia.setter
-    def ano(self, ano):
-        if isinstance(ano, int):
-            self.__ano = ano
+    @quilometragem.setter
+    def quilometragem(self, quilometragem):
+        if isinstance(quilometragem, int):
+            self.__quilometragem = quilometragem
