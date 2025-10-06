@@ -1,0 +1,1 @@
+from .controlador_veiculo import ControladorVeiculo
