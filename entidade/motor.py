@@ -9,6 +9,9 @@ class Motor():
         if isinstance(quilometragem, int):
             self.__quilometragem = quilometragem
     
+    def __str__(self):
+        return f'(Potencia: {self.potencia}; Quilometragem: {self.quilometragem});'
+    
     @property
     def potencia(self):
         return self.__potencia

@@ -4,6 +4,9 @@ class Marca():
 
         if isinstance(nome, str):
             self.__nome = nome
+        
+    def __str__(self):
+        return self.nome
     
     @property
     def nome(self):

@@ -38,6 +38,16 @@ class Veiculo:
         if isinstance(marca, Marca):
             self.__marca = marca
 
+    def __str__(self):
+        return (
+            f"  Chassi: {self.chassi}\n"
+            f"  Ano: {self.ano}\n"
+            f"  Cor: {self.cor}\n"
+            f"  Placa: {self.placa}\n"
+            f"  Motor: {self.motor.__str__()}"
+            f"  Marca: {self.marca.__str__()}"
+        )
+
     @property
     def chassi(self):
         return self.__chassi
