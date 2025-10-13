@@ -24,3 +24,25 @@ class GeradorDeRelatorios:
             contagem_veiculos[nome_marca] += 1
         
         return dict(contagem_veiculos)  
+
+    def processa_dados_compras_por_mes(self, loja, ano):
+        contagem_compras = defaultdict(lambda: defaultdict(int))
+        
+        for transacao in loja.transacoes:
+            if isinstance(transacao, Compra) and transacao.data.year == ano:
+                chave_mes = transacao.data.strftime('%Y-%m')
+                contagem_compras[chave_mes]['quantidade'] += 1
+                contagem_compras[chave_mes]['valor_total'] += transacao.valor if transacao.valor else 0.0
+        
+        return dict(contagem_compras)
+    
+    def processa_dados_vendas_por_mes(self, loja, ano):
+        contagem_vendas = defaultdict(lambda: defaultdict(int))
+        
+        for transacao in loja.transacoes:
+            if isinstance(transacao, Venda) and transacao.data.year == ano:
+                chave_mes = transacao.data.strftime('%Y-%m')
+                contagem_vendas[chave_mes]['quantidade'] += 1
+                contagem_vendas[chave_mes]['valor_total'] += transacao.valor if transacao.valor else 0.0
+        
+        return dict(contagem_vendas)
