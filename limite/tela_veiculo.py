@@ -50,7 +50,7 @@ class TelaVeiculo(TelaAbstrata):
             return dados_limpos
 
     def mostra_tela_lista_cadastrados(self, lista_veiculos):
-        print('\n--- Lista de veículos cadastrados---')
+        print('\n--- Lista de veículos cadastrados ---')
         for veiculo in lista_veiculos:
             print(veiculo.__str__())
             print('---------------------')

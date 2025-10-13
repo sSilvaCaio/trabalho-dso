@@ -103,4 +103,3 @@ class TelaVenda(TelaAbstrata):
                 return float(entrada)
             except ValueError:
                 self.mostra_mensagem_erro("Valor inválido. Digite um número decimal.")
-s

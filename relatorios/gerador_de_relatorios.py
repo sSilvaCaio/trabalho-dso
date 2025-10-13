@@ -1,5 +1,9 @@
 from collections import defaultdict
 
+from entidade.compra import Compra
+from entidade.venda import Venda
+
+
 class GeradorDeRelatorios:
     def __init__(self, controlador_relatorios):
         self.__controlador_relatorios = controlador_relatorios
