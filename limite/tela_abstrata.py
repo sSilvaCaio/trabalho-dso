@@ -16,6 +16,18 @@ class TelaAbstrata(ABC):
                     return num_int
             except ValueError:
                 self.mostra_mensagem_erro('Valor inválido. Digite um número inteiro.')
+
+   def le_data(self, mensagem: str = ""):
+        while True:
+            data_str = input(mensagem).strip()
+            if not data_str:
+                return None
+            
+            try:
+                data_obj = datetime.strptime(data_str, "%d/%m/%Y")
+                return data_obj
+            except ValueError:
+                self.mostra_mensagem_erro('Data inválida. Use o formato dd/mm/aaaa (ex: 25/12/2024)')
         
     def mostra_mensagem_erro(self, mensagem: str):
         print("\n!! ERRO : ", mensagem)
