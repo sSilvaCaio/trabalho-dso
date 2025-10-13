@@ -1,57 +1,131 @@
-from limite.telaAbstrata import TelaAbstrata
+from limite.tela_abstrata import TelaAbstrata
 
 class TelaCliente(TelaAbstrata):
     def __init__(self, controlador):
         self.__controlador = controlador
-
-    def mostra_tela_inicial(self):
-        print("----SISTEMA DE CLIENTES----")
-
+    
     def mostra_tela_opcoes(self):
-        print("\n----OPÇÕES----")
-        print("1 - Cadastrar Cliente")
-        print("2 - Listar Clientes")
-        print("3 - Alterar Cliente")
-        print("4 - Excluir Cliente")
-        print("0 - Retornar")
-        opcao = int(input("Escolha uma opção: "))
-        return opcao
-
+        print("\nEscolha o que você quer fazer:")
+        print("1: Cadastrar")
+        print("2: Listar")
+        print("3: Alterar")
+        print("4: Deletar")
+        print("0: Voltar")
+        return self.le_num_inteiro("Escolha uma opção: ", [0, 1, 2, 3, 4])
+    
     def mostra_tela_cadastro(self):
-        print("\n----CADASTRO DE CLIENTE----")
-        nome = input("Nome: ")
-        telefone = input("Telefone: ")
-        idade = int(input("Idade: "))
-        sexo = input("Sexo: ")
-        cpf = input("CPF: ")
-        return {"nome": nome, "telefone": telefone, "idade": idade, "sexo": sexo, "cpf": cpf}
-
+        while True:
+            print('\n--- Cadastrar cliente ---')
+            print('\n(Deixe o CPF em branco para voltar)')
+            
+            cpf = input("CPF: ").strip()
+            if not cpf:
+                return None
+            
+            if self.__controlador.busca_cliente_por_cpf(cpf):
+                self.mostra_mensagem_erro("Já existe um cliente com este CPF!")
+                continue
+            
+            dados = {
+                'cpf': cpf,
+                'nome': input('Nome: ').strip(),
+                'telefone': input('Telefone: ').strip(),
+                'idade': self.le_num_inteiro("Idade: "),
+                'sexo': input('Sexo: ').strip(),
+            }
+            
+            dados_limpos, erros = self.valida_dados_cliente(dados)
+            if erros:
+                for campo, erro in erros.items():
+                    self.mostra_mensagem_erro(f'Erro no campo "{campo}": {erro}')
+                continue
+            
+            return dados_limpos
+    
+    def mostra_tela_lista(self, lista_clientes):
+        print('\n--- Lista de clientes ---')
+        for cliente in lista_clientes:
+            print(cliente.__str__())
+    
+    def mostra_tela_deletar(self):
+        print('\n--- Deletar cliente ---')
+        print('\n(Deixe em branco para voltar)')
+        cpf_cliente_para_deletar = input('CPF do cliente que deseja deletar: ').strip()
+        return cpf_cliente_para_deletar if cpf_cliente_para_deletar else None
+    
     def mostra_tela_alteracao(self):
-        print("\n----ALTERAÇÃO DE CLIENTE----")
-        print("Deixe em branco para não alterar")
-        nome = input("Novo nome: ")
-        telefone = input("Novo telefone: ")
-        idade = input("Nova idade: ")
-        sexo = input("Novo sexo: ")
-        return {"nome": nome, "telefone": telefone, "idade": int(idade) if idade else None, "sexo": sexo}
-
-    def seleciona_cliente(self):
-        cpf = input("\nCPF do cliente: ")
-        return cpf
-
-    def mostra_dados_cliente(self, dados):
-        print("\n----DADOS DO CLIENTE----")
-        print(f"Nome: {dados['nome']}")
-        print(f"Telefone: {dados['telefone']}")
-        print(f"Idade: {dados['idade']}")
-        print(f"Sexo: {dados['sexo']}")
-        print(f"CPF: {dados['cpf']}")
-
-    def mostra_mensagem(self, mensagem):
-        print(mensagem)
-
-    def mostra_mensagem_TypeError(self, erro):
-        print(f"\nERRO: O campo '{erro[0]}' deve ser do tipo '{erro[1]}'")
-
-    def mostra_mensagem_Exception(self, erro):
-        print(f"\nERRO: {erro}")
+        print('\n--- Alterar cliente ---')
+        print('\n(Deixe o CPF em branco para voltar)')
+        
+        while True:
+            cpf = input('CPF do cliente que deseja alterar: ').strip()
+            if not cpf:
+                return None
+            
+            if not self.__controlador.busca_cliente_por_cpf(cpf):
+                self.mostra_mensagem_erro("Não foi encontrado um cliente com este CPF!")
+                continue
+            
+            while True:
+                print('\n(Deixe o valor em branco caso não queira alterar)')
+                dados = {
+                    'cpf': cpf,
+                    'nome': input('Nome: ').strip() or ' ',
+                    'telefone': input('Telefone: ').strip() or ' ',
+                    'idade': self.le_num_inteiro("Idade: ") or ' ',
+                    'sexo': input('Sexo: ').strip() or ' ',
+                }
+                
+                dados_limpos, erros = self.valida_dados_cliente(dados)
+                if erros:
+                    for campo, erro in erros.items():
+                        self.mostra_mensagem_erro(f'Erro no campo "{campo}": {erro}')
+                    continue
+                
+                return dados_limpos
+    
+    def valida_dados_cliente(self, dados_str: dict):
+        dados_limpos = {}
+        erros = {}
+        
+        if not dados_str['cpf']:
+            erros['cpf'] = "O CPF é obrigatório"
+        dados_limpos['cpf'] = dados_str['cpf']
+        
+        if not dados_str['nome'] and dados_str['nome'] != ' ':
+            erros['nome'] = "O nome é obrigatório"
+        dados_limpos['nome'] = dados_str['nome']
+        
+        if not dados_str['telefone'] and dados_str['telefone'] != ' ':
+            erros['telefone'] = "O telefone é obrigatório"
+        dados_limpos['telefone'] = dados_str['telefone']
+        
+        self.valida_e_converte_dados_int_cliente(dados_str, 'idade', erros, dados_limpos)
+        
+        if not dados_str['sexo'] and dados_str['sexo'] != ' ':
+            erros['sexo'] = "O sexo é obrigatório"
+        dados_limpos['sexo'] = dados_str['sexo']
+        
+        if erros:
+            return None, erros
+        
+        return dados_limpos, None
+    
+    def valida_e_converte_dados_int_cliente(self, dados_str: dict, nome_campo: str, erros: dict, dados_limpos: dict):
+        valor_str = dados_str[nome_campo]
+        
+        if valor_str == ' ':
+            dados_limpos[nome_campo] = valor_str
+            return
+        
+        if valor_str is None:
+            erros[nome_campo] = f"O campo '{nome_campo}' é obrigatório."
+            return
+        
+        try:
+            valor_int = int(valor_str)
+            if nome_campo == 'idade' and not (0 < valor_int < 150):
+                erros[nome_campo] = 'A idade deve estar entre 1 e 149.'
+            dados_limpos[nome_campo] = valor_int
+        except ValueError:
+            erros[nome_campo] = f'O valor "{valor_str}" não é válido. Insira um número inteiro'
