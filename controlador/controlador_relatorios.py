@@ -23,8 +23,10 @@ class ControladorRelatorios:
         switcher = {
             1: self.abre_relatorio_servicos_por_mes,
             2: self.abre_relatorio_veiculos_em_estoque_por_marca,
+            3: self.mostra_relatorio_compras,
+            4: self.mostra_relatorio_vendas
         }
-
+    
         while True:
             opcao = self.tela.mostra_tela_opcoes()
 
@@ -46,3 +48,17 @@ class ControladorRelatorios:
     def abre_relatorio_veiculos_em_estoque_por_marca(self):
         dados = self.gerador_relatorios.processa_dados_veiculos_em_estoque_por_marca(self.__controlador_principal.loja)
         self.tela.mostra_relatorio_veiculos_em_estoque_por_marca(dados)
+
+    def mostra_relatorio_compras(self):
+        ano = self.tela.solicita_ano()
+        if not ano:
+            return
+        dados = self.gerador_relatorios.processa_dados_compras_por_mes(self.__controlador_principal.loja, ano)
+        self.tela.mostra_relatorio_compras_por_mes(dados)
+    
+    def mostra_relatorio_vendas(self):
+        ano = self.tela.solicita_ano()
+        if not ano:
+            return
+        dados = self.gerador_relatorios.processa_dados_vendas_por_mes(self.__controlador_principal.loja, ano)
+        self.tela.mostra_relatorio_vendas_por_mes(dados)
