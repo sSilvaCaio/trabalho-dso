@@ -9,10 +9,6 @@ class Loja:
         self.__nome = None
         self.__cnpj = None
         self.__endereco = None
-        self.__veiculos_em_estoque = []
-        self.__fornecedores = []
-        self.__clientes = []
-        self.__servicos_prestados = []
 
         if isinstance(nome, str):
             self.__nome = nome
@@ -20,6 +16,16 @@ class Loja:
             self.__cnpj = cnpj
         if isinstance(endereco, str):
             self.__endereco = endereco
+
+        self.__veiculos_cadastrados = []
+        self.__veiculos_em_estoque = []
+        self.__fornecedores = []
+        self.__clientes = []
+        self.__servicos_prestados = []
+        self.__transacoes = []
+        self.__marcas = []
+        self.__tipos_servico = []
+
 
     @property
     def nome(self):
@@ -47,6 +53,10 @@ class Loja:
     def endereco(self, endereco: str):
         if isinstance(endereco, str):
             self.__endereco = endereco
+
+    @property
+    def veiculos_cadastrados(self):
+        return self.__veiculos_cadastrados
 
     @property
     def veiculos_em_estoque(self):
@@ -83,3 +93,16 @@ class Loja:
     def servicos_prestados(self, servicos: list):
         if isinstance(servicos, list):
             self.__servicos_prestados = servicos
+    
+    @property
+    def transacoes(self):
+        return self.__transacoes
+    
+    @property
+    def marcas(self):
+        return self.__marcas
+    
+    @property
+    def tipos_servico(self):
+        return self.__tipos_servico
+    

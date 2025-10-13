@@ -13,3 +13,6 @@ class TipoServico():
     def nome(self, nome):
         if isinstance(nome, str):
             self.__nome = nome
+    
+    def __str__(self):
+        return f'Nome: {self.__nome}'
