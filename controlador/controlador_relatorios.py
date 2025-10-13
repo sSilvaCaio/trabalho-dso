@@ -21,7 +21,8 @@ class ControladorRelatorios:
 
     def abre_tela_opcoes(self):
         switcher = {
-            1: self.mostra_relatorio_servicos
+            1: self.abre_relatorio_servicos_por_mes,
+            2: self.abre_relatorio_veiculos_em_estoque_por_marca,
         }
 
         while True:
@@ -38,7 +39,10 @@ class ControladorRelatorios:
                 self.tela.mostra_mensagem_erro("Opção inválida.")
     
 
-    def mostra_relatorio_servicos(self):
+    def abre_relatorio_servicos_por_mes(self):
         dados = self.gerador_relatorios.processa_dados_servicos_por_mes(self.__controlador_principal.loja)
         self.tela.mostra_relatorio_servicos_por_mes(dados)
     
+    def abre_relatorio_veiculos_em_estoque_por_marca(self):
+        dados = self.gerador_relatorios.processa_dados_veiculos_em_estoque_por_marca(self.__controlador_principal.loja)
+        self.tela.mostra_relatorio_veiculos_em_estoque_por_marca(dados)

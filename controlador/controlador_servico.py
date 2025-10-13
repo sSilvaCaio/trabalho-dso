@@ -60,13 +60,13 @@ class ControladorServico():
                 continue
 
             novo_servico = Servico(tipo_servico, veiculo, dados_servico['valor'], dados_servico['data'])
-            self.tela.mostra_mensagem_sucesso('Serviço registrado')
+            self.tela.mostra_mensagem('Serviço registrado')
             self.controlador_principal.loja.servicos_prestados.append(novo_servico)
             return novo_servico
 
 
     def lista_servicos(self):
-        self.tela.mostra_tela_lista(self.__servicos)
+        self.tela.mostra_tela_lista(self.controlador_principal.loja.servicos_prestados)
 
     def altera_servico(self):
         while True:
@@ -78,35 +78,41 @@ class ControladorServico():
             servico = self.busca_servico_por_id(novos_dados['id'])
 
             if not servico:
-                self.tela.mostra_mensagem_erro('Não existe serviço cadastrado com este ID')
+                self.tela.mostra_mensagem_erro('Não existe serviço com este ID.')
                 continue
 
-            tipo_servico = (self.controlador_principal.controlador_tipo_servico.
-                            busca_tipo_servico_por_nome(novos_dados['tipo_servico']))
             
-            if not tipo_servico:
-                (self.controlador_principal.controlador_tipo_servico.tela.
-                mostra_mensagem_erro('Não existe tipo de serviço cadastrado com este nome'))
-                continue
 
-            veiculo = self.controlador_principal.controlador_veiculo.busca_veiculo_por_chassi(novos_dados['chassi'])
+            tipo_servico = ' '
 
-            if not veiculo:
-                (self.controlador_principal.controlador_veiculo.tela.
-                mostra_mensagem_erro('Não existe veículo com este chassi.'))
-                continue
+            if novos_dados['tipo_servico'] != ' ':
+                tipo_servico = (self.controlador_principal.controlador_tipo_servico.
+                                busca_tipo_servico_por_nome(novos_dados['tipo_servico']))
+                if not tipo_servico:
+                    (self.controlador_principal.controlador_tipo_servico.tela.
+                    mostra_mensagem_erro('Não existe tipo de serviço cadastrado com este nome'))
+                    continue
             
+            veiculo = ' '
+            
+            if novos_dados['chassi'] != ' ':
+                veiculo = self.controlador_principal.controlador_veiculo.busca_veiculo_por_chassi(novos_dados['chassi'])
+                if not veiculo:
+                    (self.controlador_principal.controlador_veiculo.tela.
+                    mostra_mensagem_erro('Não foi encontrado veículo com este chassi'))
+                    continue
+
             if self.busca_servico_por_atributos(tipo_servico, veiculo, novos_dados['valor'], novos_dados['data']):
                 self.tela.mostra_mensagem_erro('Já existe serviço cadastrado com esses dados')
                 continue
             
-            if tipo_servico:
+            if tipo_servico != ' ':
                 servico.tipo_servico = tipo_servico
-            if veiculo:
+            if veiculo != ' ':
                 servico.veiculo = veiculo
-            if novos_dados['valor']:
+            if novos_dados['valor'] != ' ':
                 servico.valor = novos_dados["valor"]
-            if novos_dados['data']:
+            if novos_dados['data'] != ' ':
                 servico.data = novos_dados["data"]
 
             self.tela.mostra_mensagem('Serviço alterado.')
@@ -127,14 +133,13 @@ class ControladorServico():
                 continue
             
             self.controlador_principal.loja.servicos_prestados.remove(servico_para_deletar)
-            self.tela.mostra_mensagem_sucesso('Serviço removido.')
+            self.tela.mostra_mensagem('Serviço removido.')
             return True
     
     def busca_servico_por_id(self, id: int):
         for servico in self.controlador_principal.loja.servicos_prestados:
             if servico.id == id:
                 return servico
-        
         return None
     
     def busca_servico_por_atributos(self, tipo_servico, veiculo, valor, data):

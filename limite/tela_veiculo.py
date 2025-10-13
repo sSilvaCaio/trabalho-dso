@@ -19,7 +19,6 @@ class TelaVeiculo(TelaAbstrata):
         while True:
             print('\n--- Cadastrar veículo ---')
             print('\n(Deixe o chassi em branco para voltar)')
-            print('\n(Deixe o valor em branco caso não queira alterar)')
 
             chassi = self.le_num_inteiro("Chassi: ")
 
@@ -53,6 +52,7 @@ class TelaVeiculo(TelaAbstrata):
         print('\n--- Lista de veículos ---')
         for veiculo in lista_veiculos:
             print(veiculo.__str__())
+            print('---------------------')
         
     def mostra_tela_deletar(self):
         print('\n--- Deletar veículo ---')
@@ -63,6 +63,7 @@ class TelaVeiculo(TelaAbstrata):
     def mostra_tela_alteracao(self):
         print('\n--- Alterar veículo ---')
         print('\n(Deixe o chassi em branco para voltar)')
+        print('\n(Deixe em branco o que não quiser alterar)')
         while True:
 
             chassi = self.le_num_inteiro('Chassi do veículo que deseja alterar: ')

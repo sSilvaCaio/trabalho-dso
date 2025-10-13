@@ -15,4 +15,4 @@ class TipoServico():
             self.__nome = nome
     
     def __str__(self):
-        return f'Nome: {self.__nome}'
+        return f'{self.__nome}'

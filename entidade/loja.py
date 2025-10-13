@@ -49,7 +49,6 @@ class Loja:
     def endereco(self):
         return self.__endereco
 
-    @endereco.setter
     def endereco(self, endereco: str):
         if isinstance(endereco, str):
             self.__endereco = endereco
@@ -62,38 +61,18 @@ class Loja:
     def veiculos_em_estoque(self):
         return self.__veiculos_em_estoque
 
-    @veiculos_em_estoque.setter
-    def veiculos_em_estoque(self, veiculos: list):
-        if isinstance(veiculos, list):
-            self.__veiculos_em_estoque = veiculos
-
     @property
     def fornecedores(self):
         return self.__fornecedores
-
-    @fornecedores.setter
-    def fornecedores(self, fornecedores: list):
-        if isinstance(fornecedores, list):
-            self.__fornecedores = fornecedores
 
     @property
     def clientes(self):
         return self.__clientes
 
-    @clientes.setter
-    def clientes(self, clientes: list):
-        if isinstance(clientes, list):
-            self.__clientes = clientes
-
     @property
     def servicos_prestados(self):
         return self.__servicos_prestados
 
-    @servicos_prestados.setter
-    def servicos_prestados(self, servicos: list):
-        if isinstance(servicos, list):
-            self.__servicos_prestados = servicos
-    
     @property
     def transacoes(self):
         return self.__transacoes

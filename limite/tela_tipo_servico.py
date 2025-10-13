@@ -43,7 +43,8 @@ class TelaTipoServico(TelaAbstrata):
     def mostra_tela_lista(self, lista_tipos_servico):
         print('\n--- Lista de tipos de serviço ---')
         for i in range(len(lista_tipos_servico)):
-            print(f'Tipo de serviço {i+1}: {lista_tipos_servico[i].__str__()}')
+            print(f'{i+1}: {lista_tipos_servico[i].__str__()}')
+            print('---------------------')
 
     def mostra_tela_deletar(self):
         print('\n--- Deletar tipo de serviço ---')

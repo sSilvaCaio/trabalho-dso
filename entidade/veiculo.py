@@ -44,7 +44,7 @@ class Veiculo:
             f"  Ano: {self.ano}\n"
             f"  Cor: {self.cor}\n"
             f"  Placa: {self.placa}\n"
-            f"  Motor: {self.motor.__str__()}"
+            f"  Motor: {self.motor.__str__()}\n"
             f"  Marca: {self.marca.__str__()}"
         )
 

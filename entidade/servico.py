@@ -7,7 +7,7 @@ class Servico:
     __proximo_id = 1
 
     def __init__(self, tipo_servico: TipoServico, veiculo: Veiculo, valor: float, data: date):
-        self.__id = str(Servico.__proximo_id)
+        self.__id = Servico.__proximo_id
         Servico.__proximo_id += 1
 
         self.__tipo_servico = None
@@ -64,7 +64,7 @@ class Servico:
         return (
             f"  ID: {self.id}\n"
             f"  Data: {self.data}\n"
-            f"  Veículo: {self.veiculo}\n"
+            f"  Veículo: {self.veiculo.chassi}\n"
             f"  Tipo: {self.tipo_servico}\n"
             f"  Valor: R$ {self.valor:.2f}"
         )

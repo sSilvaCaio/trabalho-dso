@@ -16,13 +16,16 @@ class ControladorMarca():
         return self.__controlador_principal
     
     def abre_tela_opcoes(self):
-        switcher = {0: 'Voltar', 1: self.cadastra_marca, 2: self.lista_marcas, 3: self.altera_marca, 4: self.deleta_marca}
+        switcher = {1: self.cadastra_marca, 2: self.lista_marcas, 3: self.altera_marca, 4: self.deleta_marca}
         while True:
-            opcao = self.tela.mostra_tela_opcoes()
+            opcao = self.__tela.mostra_tela_opcoes()
             if opcao == 0:
                 break
-            funcao_escolhida = switcher[opcao]
-            funcao_escolhida()
+            funcao = switcher.get(opcao)
+            if funcao:
+                funcao()
+            else:
+                self.__tela.mostra_mensagem_erro("Opção inválida.")
 
     def cadastra_marca(self):
         while True:

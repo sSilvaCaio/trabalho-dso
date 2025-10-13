@@ -100,7 +100,7 @@ class ControladorVeiculo:
                 continue
             
             
-            obj_marca = self.controlador_principal.controlador_marca.busca_marca_por_nome(novos_dados['marca'])
+            obj_marca = self.controlador_principal.controlador_marca.busca_marca_por_nome(novos_dados['marca']) or ' '
             if not obj_marca:
                 (self.controlador_principal.controlador_marca.tela.
                 mostra_mensagem_erro(f'A marca "{novos_dados['marca']}" não foi encontrada.'))

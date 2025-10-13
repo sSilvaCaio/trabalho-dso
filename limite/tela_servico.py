@@ -9,11 +9,11 @@ class TelaServico(TelaAbstrata):
 
     def mostra_tela_opcoes(self):
         print("\n---- MÓDULO DE SERVIÇOS ----")
-        print("1 - Registrar Novo Serviço")
-        print("2 - Listar Todos os Serviços")
-        print("3 - Alterar Serviço Existente")
-        print("4 - Excluir Serviço")
-        print("0 - Retornar ao Menu Principal")
+        print("1 - Registrar")
+        print("2 - Listar")
+        print("3 - Alterar")
+        print("4 - Deletar")
+        print("0 - Voltar")
         return self.le_num_inteiro("Escolha uma opção: ", [0, 1, 2, 3, 4])
 
     def mostra_tela_cadastro(self):
@@ -27,6 +27,10 @@ class TelaServico(TelaAbstrata):
                 return None
 
             chassi_veiculo = self.le_num_inteiro("Chassi do veículo: ")
+
+            if not chassi_veiculo:
+                self.mostra_mensagem_erro("Chassi do veículo é obrigatório.")
+                continue
         
             try:
                 valor = float(input("Valor do serviço (ex: 250.50): "))
@@ -52,22 +56,33 @@ class TelaServico(TelaAbstrata):
         print('\n--- Lista de serviços ---')
         for servico in lista_servicos:
             print(servico.__str__())
+            print('---------------------')
 
     def mostra_tela_alteracao(self):
         print('\n--- Alterar serviço ---')
         print('\n(Deixe o ID em branco para voltar)')
+        print('\n(Deixe em branco o que não quiser alterar)')
 
         while True:
             id = self.le_num_inteiro('ID do serviço que deseja alterar: ')
+
             if not id:
                 return None
             
             tipo_servico = input("Novo Tipo de Serviço: ").strip() or ' '
 
             chassi_veiculo = self.le_num_inteiro("Chassi do veículo: ") or ' '
+            
 
             try:
-                valor = float(input("Valor do serviço (ex: 250.50): ")) or ' '
+                valor_str = input("Valor do serviço (ex: 250.50): ")
+                if not valor_str.strip():
+                    valor = ' '
+                else:
+                    valor = float(valor_str)
+                    if valor <= 0:
+                        self.mostra_mensagem_erro("O valor do serviço deve ser maior que 0.")
+                        continue
             except ValueError:
                 self.mostra_mensagem_erro("Valor inválido. Use '.' como separador decimal.")
                 continue
@@ -75,16 +90,17 @@ class TelaServico(TelaAbstrata):
             data_str = input("Data do serviço (dd/mm/aaaa): ").strip()
             if not data_str.strip():
                 data_obj = ' '
-            try:
-                data_obj = datetime.strptime(data_str, "%d/%m/%Y").date()
-            except ValueError:
-                self.mostra_mensagem_erro(f"A data '{data_str}' não está no formato esperado 'dd/mm/aaaa'.")
-                continue
+            else:
+                try:
+                    data_obj = datetime.strptime(data_str, "%d/%m/%Y").date()
+                except ValueError:
+                    self.mostra_mensagem_erro(f"A data '{data_str}' não está no formato esperado 'dd/mm/aaaa'.")
+                    continue
 
             dados = {
                 'id': id,
                 'tipo_servico': tipo_servico,
-                'chassi_veiculo': chassi_veiculo,
+                'chassi': chassi_veiculo,
                 'valor': valor,
                 'data': data_obj,
             }

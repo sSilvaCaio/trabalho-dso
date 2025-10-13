@@ -7,15 +7,15 @@ class TelaMarca(TelaAbstrata):
 
     def mostra_tela_cadastro(self):
         print('\n--- Cadastro marca ---')
-        while True:
-            nome = input('Nome da marca: ').strip()
-            if nome:
-                return nome
+        print('\n(Deixe em branco para voltar)')
+        nome = input('Nome da marca: ').strip()
+        if nome:
+            return nome
             
-            self.mostra_mensagem_erro('O nome da marca é obrigatório.')
-
+        return None
     def mostra_tela_alteracao(self):
         print('\n--- Alterar marca ---')
+        print('\n(Deixe em branco para voltar)')
         while True:
             nome = input('Nome da marca que deseja alterar: ').strip()
             novo_nome = input('Novo nome da marca: ').strip()
@@ -32,9 +32,11 @@ class TelaMarca(TelaAbstrata):
         print('\n--- Lista de marcas ---')
         for i in range(len(lista_marcas)):
             print(f'Marca {i+1}: {lista_marcas[i].__str__()}')
+            print('---------------------')
 
     def mostra_tela_deletar(self):
         print('\n--- Deletar marca ---')
+        print('\n(Deixe em branco para voltar)')
         nome = input('Nome da marca para deletar: ')
         return nome
 

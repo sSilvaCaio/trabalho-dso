@@ -40,7 +40,7 @@ class ControladorTipoServico():
 
             novo_tipo = TipoServico(nome)
             self.controlador_principal.loja.tipos_servico.append(novo_tipo)
-            self.tela.mostra_mensagem('Tipo de serviço ' + nome + ' foi adicionad')
+            self.tela.mostra_mensagem('Tipo de serviço ' + nome + ' foi adicionado')
             return novo_tipo
 
     def altera_tipo_servico(self):

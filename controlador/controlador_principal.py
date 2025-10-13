@@ -75,10 +75,6 @@ class ControladorPrincipal:
     def controlador_relatorios(self):
         return self.__controlador_relatorios
     
-    @property
-    def gerador_relatorios(self):
-        return self.__gerador_relatorios
-    
     def inicia_sistema(self):
         self.abre_tela_opcoes()
 
