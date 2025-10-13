@@ -8,12 +8,13 @@ class TelaVeiculo(TelaAbstrata):
     def mostra_tela_opcoes(self):
         print("\nEscolha o que você quer fazer:")
         print("1: Cadastrar")
-        print("2: Listar")
-        print("3: Alterar")
-        print("4: Deletar")
+        print("2: Listar cadastrados")
+        print("3: Listar em estoque")
+        print("4: Alterar")
+        print("5: Deletar")
         print("0: Voltar")
 
-        return self.le_num_inteiro("Escolha uma opção: ", [0, 1, 2, 3, 4])
+        return self.le_num_inteiro("Escolha uma opção: ", [0, 1, 2, 3, 4, 5])
 
     def mostra_tela_cadastro(self):
         while True:
@@ -48,8 +49,14 @@ class TelaVeiculo(TelaAbstrata):
 
             return dados_limpos
 
-    def mostra_tela_lista(self, lista_veiculos):
-        print('\n--- Lista de veículos ---')
+    def mostra_tela_lista_cadastrados(self, lista_veiculos):
+        print('\n--- Lista de veículos cadastrados---')
+        for veiculo in lista_veiculos:
+            print(veiculo.__str__())
+            print('---------------------')
+    
+    def mostra_tela_lista_em_estoque(self, lista_veiculos):
+        print('\n--- Lista de veículos em estoque ---')
         for veiculo in lista_veiculos:
             print(veiculo.__str__())
             print('---------------------')

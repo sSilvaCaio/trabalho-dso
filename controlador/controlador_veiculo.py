@@ -16,7 +16,7 @@ class ControladorVeiculo:
         return self.__controlador_principal
     
     def abre_tela_opcoes(self):
-        switcher = {1: self.cadastra_veiculo, 2: self.lista_veiculos, 3: self.altera_veiculo, 4: self.deleta_veiculo}
+        switcher = {1: self.cadastra_veiculo, 2: self.lista_veiculos_cadastrados, 3: self.lista_veiculos_em_estoque, 4: self.altera_veiculo, 5: self.deleta_veiculo}
         while True:
             opcao = self.tela.mostra_tela_opcoes()
             if opcao == 0:
@@ -53,18 +53,26 @@ class ControladorVeiculo:
                 marca=obj_marca,
             )
             self.controlador_principal.loja.veiculos_cadastrados.append(novo_veiculo)
-            self.controlador_principal.loja.veiculos_em_estoque.append(novo_veiculo)
-            self.tela.mostra_mensagem("Veículo cadastrado e adicionado ao estoque.")
+            self.tela.mostra_mensagem("Veículo cadastrado.")
             return novo_veiculo
 
-    def lista_veiculos(self):
+    def lista_veiculos_cadastrados(self):
         veiculos = self.controlador_principal.loja.veiculos_cadastrados
 
         if not veiculos:
             self.tela.mostra_mensagem("Nenhum veículo cadastrado.")
             return None
         
-        self.tela.mostra_tela_lista(veiculos)
+        self.tela.mostra_tela_lista_cadastrados(veiculos)
+
+    def lista_veiculos_em_estoque(self):
+        veiculos = self.controlador_principal.loja.veiculos_em_estoque
+
+        if not veiculos:
+            self.tela.mostra_mensagem("Nenhum veículo em estoque.")
+            return None
+        
+        self.tela.mostra_tela_lista_em_estoque(veiculos)
 
     def deleta_veiculo(self):
         while True:
@@ -98,7 +106,6 @@ class ControladorVeiculo:
             if not veiculo:
                 self.tela.mostra_mensagem_erro('Não existe veículo com este chassi.')
                 continue
-            
             
             obj_marca = self.controlador_principal.controlador_marca.busca_marca_por_nome(novos_dados['marca']) or ' '
             if not obj_marca:
