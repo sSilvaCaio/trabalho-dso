@@ -1,103 +1,110 @@
 from entidade.cliente import Cliente
 from limite.tela_cliente import TelaCliente
-from excecoes.clienteNaoEncontradoException import ClienteNaoEncontradoException
 
 class ControladorCliente:
-    def __init__(self):
-        self.__clientes = []
-        self.__tela_cliente = TelaCliente(self)
-
+    def __init__(self, controlador_principal):
+        self.__tela = TelaCliente(self)
+        self.__controlador_principal = controlador_principal
+    
+    @property
+    def tela(self):
+        return self.__tela
+    
+    @property
+    def controlador_principal(self):
+        return self.__controlador_principal
+    
+    def abre_tela_opcoes(self):
+        switcher = {1: self.cadastra_cliente, 2: self.lista_clientes, 3: self.altera_cliente, 4: self.deleta_cliente}
+        
+        while True:
+            opcao = self.tela.mostra_tela_opcoes()
+            if opcao == 0:
+                break
+            
+            funcao = switcher.get(opcao)
+            if funcao:
+                funcao()
+            else:
+                self.tela.mostra_mensagem_erro("Opção inválida.")
+    
+    def cadastra_cliente(self):
+        while True:
+            dados_cliente = self.tela.mostra_tela_cadastro()
+            if not dados_cliente:
+                return None
+            
+            if self.busca_cliente_por_cpf(dados_cliente['cpf']):
+                self.tela.mostra_mensagem_erro("Já existe um cliente com este CPF!")
+                continue
+            
+            novo_cliente = Cliente(
+                nome=dados_cliente["nome"],
+                telefone=dados_cliente["telefone"],
+                idade=dados_cliente["idade"],
+                sexo=dados_cliente["sexo"],
+                cpf=dados_cliente["cpf"],
+            )
+            
+            self.controlador_principal.loja.clientes_cadastrados.append(novo_cliente)
+            self.tela.mostra_mensagem("Cliente cadastrado com sucesso.")
+            return novo_cliente
+    
+    def lista_clientes(self):
+        clientes = self.controlador_principal.loja.clientes_cadastrados
+        if not clientes:
+            self.tela.mostra_mensagem("Nenhum cliente cadastrado.")
+            return None
+        
+        self.tela.mostra_tela_lista(clientes)
+    
+    def deleta_cliente(self):
+        while True:
+            cpf = self.tela.mostra_tela_deletar()
+            if not cpf:
+                return None
+            
+            cliente = self.busca_cliente_por_cpf(cpf)
+            if not cliente:
+                self.tela.mostra_mensagem_erro("Não existe cliente com este CPF.")
+                continue
+            
+            removido_com_sucesso = self.deleta_cliente_por_objeto(cliente)
+            if removido_com_sucesso:
+                self.tela.mostra_mensagem('Cliente deletado.')
+                return True
+            else:
+                self.tela.mostra_mensagem_erro('Erro ao deletar cliente.')
+                return False
+    
+    def altera_cliente(self):
+        while True:
+            novos_dados = self.tela.mostra_tela_alteracao()
+            if not novos_dados:
+                return None
+            
+            cliente = self.busca_cliente_por_cpf(novos_dados['cpf'])
+            if not cliente:
+                self.tela.mostra_mensagem_erro('Não existe cliente com este CPF.')
+                continue
+            
+            if novos_dados['nome'] != ' ': cliente.nome = novos_dados["nome"]
+            if novos_dados['telefone'] != ' ': cliente.telefone = novos_dados["telefone"]
+            if novos_dados['idade'] != ' ': cliente.idade = novos_dados["idade"]
+            if novos_dados['sexo'] != ' ': cliente.sexo = novos_dados["sexo"]
+            
+            self.tela.mostra_mensagem('Cliente alterado.')
+            return cliente
+    
+    def deleta_cliente_por_objeto(self, cliente_para_deletar: Cliente):
+        if cliente_para_deletar and isinstance(cliente_para_deletar, Cliente):
+            if cliente_para_deletar in self.__controlador_principal.loja.clientes_cadastrados:
+                self.__controlador_principal.loja.clientes_cadastrados.remove(cliente_para_deletar)
+                return True
+        return False
+    
     def busca_cliente_por_cpf(self, cpf):
-        for cliente in self.__clientes:
+        for cliente in self.controlador_principal.loja.clientes_cadastrados:
             if cliente.cpf == cpf:
                 return cliente
-        raise ClienteNaoEncontradoException
-
-    def cadastra_cliente(self):
-        try:
-            self.__tela_cliente.mostra_tela_inicial()
-            dados_cliente = self.__tela_cliente.mostra_tela_cadastro()
-            try:
-                self.busca_cliente_por_cpf(dados_cliente['cpf'])
-                self.__tela_cliente.mostra_mensagem("ERRO: Cliente já cadastrado!")
-                return None
-            except ClienteNaoEncontradoException:
-                pass
-            novo_cliente = Cliente(
-                dados_cliente["nome"],
-                dados_cliente["telefone"],
-                dados_cliente["idade"],
-                dados_cliente["sexo"],
-                dados_cliente["cpf"]
-            )
-            self.__clientes.append(novo_cliente)
-            self.__tela_cliente.mostra_mensagem("Cliente cadastrado com sucesso!")
-            return novo_cliente
-        except TypeError as e:
-            return self.__tela_cliente.mostra_mensagem_TypeError(e.args)
-        except Exception as e:
-            return self.__tela_cliente.mostra_mensagem_Exception(e)
-
-    def lista_clientes(self):
-        if len(self.__clientes) == 0:
-            self.__tela_cliente.mostra_mensagem("Nenhum cliente cadastrado!")
-            return
-        for cliente in self.__clientes:
-            dados_cliente = {
-                "nome": cliente.nome,
-                "telefone": cliente.telefone,
-                "idade": cliente.idade,
-                "sexo": cliente.sexo,
-                "cpf": cliente.cpf
-            }
-            self.__tela_cliente.mostra_dados_cliente(dados_cliente)
-
-    def altera_cliente(self):
-        try:
-            cpf = self.__tela_cliente.seleciona_cliente()
-            cliente = self.busca_cliente_por_cpf(cpf)
-            novos_dados = self.__tela_cliente.mostra_tela_alteracao()
-            if novos_dados["nome"]:
-                cliente.nome = novos_dados["nome"]
-            if novos_dados["telefone"]:
-                cliente.telefone = novos_dados["telefone"]
-            if novos_dados["idade"]:
-                cliente.idade = novos_dados["idade"]
-            if novos_dados["sexo"]:
-                cliente.sexo = novos_dados["sexo"]
-            self.__tela_cliente.mostra_mensagem("Cliente alterado com sucesso!")
-            return True
-        except TypeError as e:
-            return self.__tela_cliente.mostra_mensagem_TypeError(e.args)
-        except Exception as e:
-            return self.__tela_cliente.mostra_mensagem_Exception(e)
-
-    def deleta_cliente(self):
-        try:
-            cpf = self.__tela_cliente.seleciona_cliente()
-            cliente = self.busca_cliente_por_cpf(cpf)
-            self.__clientes.remove(cliente)
-            self.__tela_cliente.mostra_mensagem("Cliente deletado com sucesso!")
-            return True
-        except TypeError as e:
-            return self.__tela_cliente.mostra_mensagem_TypeError(e.args)
-        except Exception as e:
-            return self.__tela_cliente.mostra_mensagem_Exception(e)
-
-    def abre_tela_opcoes(self):
-        switcher = {
-            0: 'break',
-            1: self.cadastra_cliente,
-            2: self.lista_clientes,
-            3: self.altera_cliente,
-            4: self.deleta_cliente
-        }
-        while True:
-            opcao = self.__tela_cliente.mostra_tela_opcoes()
-            funcao_escolhida = switcher.get(opcao)
-            if funcao_escolhida == 'break':
-                break
-            elif funcao_escolhida:
-                funcao_escolhida()
-            else:
-                self.__tela_cliente.mostra_mensagem("Opção inválida!")
+        return None
