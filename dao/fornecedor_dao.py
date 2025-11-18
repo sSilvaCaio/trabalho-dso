@@ -1,22 +1,22 @@
 from dao.abstract_dao import BaseDAO 
-from entidade.venda import Venda
+from entidade.fornecedor import Fornecedor
 
-class VendaDAO(BaseDAO):
+class FornecedorDAO(BaseDAO):
     def __init__(self):
-        super().__init__("vendas.pkl")
+        super().__init__("fornecedor.pkl")
     
-    def add(self, venda: Venda):
-        if isinstance(venda, Venda) and isinstance(venda.id, int) and (venda is not None):
-            return super().add(venda.id, venda)        
+    def add(self, fornecedor: Fornecedor):
+        if isinstance(fornecedor, Fornecedor) and isinstance(fornecedor.cnpj, str) and (fornecedor is not None):
+            return super().add(fornecedor.cnpj, fornecedor)        
     
-    def update(self, venda: Venda):
-        if isinstance(venda, Venda) and isinstance(venda.id, int) and (venda is not None):
-            return super().update(venda.id, venda)
+    def update(self, fornecedor: Fornecedor):
+        if isinstance(fornecedor, Fornecedor) and isinstance(fornecedor.cnpj, str) and (fornecedor is not None):
+            return super().update(fornecedor.cnpj, fornecedor)
 
-    def get(self, key: int):
-        if isinstance(key, int):
+    def get(self, key: str):
+        if isinstance(key, str):
             return super().get(key)
     
-    def remove(self, key: int):
-        if isinstance(key, int):
+    def remove(self, key: str):
+        if isinstance(key, str):
             return super().remove(key)
