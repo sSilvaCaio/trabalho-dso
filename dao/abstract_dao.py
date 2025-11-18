@@ -13,12 +13,10 @@ class BaseDAO(ABC):
             self.__dump()
 
     def __dump(self):
-        with open(self.datasource, "wb") as f:
-            pickle.dump(self.__cache, f)
+        pickle.dump(self.__cache, open(self.__datasource, 'wb'))
 
     def __load(self):
-        with open(self.datasource, "rb") as f:
-            self.__cache = pickle.load(f)
+        self.__cache = pickle.load(open(self.__datasource,'rb'))
 
     def add(self, key, obj):
         if key in self.__cache:
