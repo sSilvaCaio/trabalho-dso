@@ -1,4 +1,4 @@
-from abstract_dao import BaseDAO 
+from dao.abstract_dao import BaseDAO 
 from entidade.venda import Venda
 
 class VendaDAO(BaseDAO):
@@ -7,11 +7,11 @@ class VendaDAO(BaseDAO):
     
     def add(self, venda: Venda):
         if isinstance(venda, Venda) and isinstance(venda.id, int) and (venda is not None):
-            super().add(venda.id, venda)        
+            return super().add(venda.id, venda)        
     
     def update(self, venda: Venda):
         if isinstance(venda, Venda) and isinstance(venda.id, int) and (venda is not None):
-            super().update(venda.id, venda)
+            return super().update(venda.id, venda)
 
     def get(self, key: int):
         if isinstance(key, int):
@@ -19,4 +19,4 @@ class VendaDAO(BaseDAO):
     
     def remove(self, key: int):
         if isinstance(key, int):
-            super().remove(key)
+            return super().remove(key)
