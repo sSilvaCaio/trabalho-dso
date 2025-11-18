@@ -1,4 +1,4 @@
-from abstract_dao import BaseDAO 
+from dao.abstract_dao import BaseDAO 
 from entidade.fornecedor import Fornecedor
 
 class FornecedorDAO(BaseDAO):
@@ -6,12 +6,12 @@ class FornecedorDAO(BaseDAO):
         super().__init__("fornecedor.pkl")
     
     def add(self, fornecedor: Fornecedor):
-        if isinstance(fornecedor, Fornecedor) and isinstance(fornecedor.id_fornecedor, str) and (fornecedor is not None):
-            super().add(fornecedor.id_fornecedor, fornecedor)        
+        if isinstance(fornecedor, Fornecedor) and isinstance(fornecedor.cnpj, str) and (fornecedor is not None):
+            return super().add(fornecedor.cnpj, fornecedor)        
     
     def update(self, fornecedor: Fornecedor):
-        if isinstance(fornecedor, Fornecedor) and isinstance(fornecedor.id_fornecedor, str) and (fornecedor is not None):
-            super().update(fornecedor.id_fornecedor, fornecedor)
+        if isinstance(fornecedor, Fornecedor) and isinstance(fornecedor.cnpj, str) and (fornecedor is not None):
+            return super().update(fornecedor.cnpj, fornecedor)
 
     def get(self, key: str):
         if isinstance(key, str):
@@ -19,4 +19,4 @@ class FornecedorDAO(BaseDAO):
     
     def remove(self, key: str):
         if isinstance(key, str):
-            super().remove(key)
+            return super().remove(key)
