@@ -46,12 +46,12 @@ class ControladorFornecedor:
                 cnpj=dados_fornecedor["cnpj"],
             )
             
-            self.controlador_principal.loja.fornecedores_cadastrados.append(novo_fornecedor)
+            self.controlador_principal.loja.fornecedor_dao.add(novo_fornecedor)
             self.tela.mostra_mensagem("Fornecedor cadastrado com sucesso.")
             return novo_fornecedor
     
     def lista_fornecedores(self):
-        fornecedores = self.controlador_principal.loja.fornecedores_cadastrados
+        fornecedores = self.controlador_principal.loja.fornecedor_dao.get_all()
         if not fornecedores:
             self.tela.mostra_mensagem("Nenhum fornecedor cadastrado.")
             return None
@@ -93,18 +93,19 @@ class ControladorFornecedor:
             if novos_dados['idade'] != ' ': fornecedor.idade = novos_dados["idade"]
             if novos_dados['sexo'] != ' ': fornecedor.sexo = novos_dados["sexo"]
             
+            self.controlador_principal.loja.fornecedor_dao.update(fornecedor)
             self.tela.mostra_mensagem('Fornecedor alterado.')
             return fornecedor
     
     def deleta_fornecedor_por_objeto(self, fornecedor_para_deletar: Fornecedor):
         if fornecedor_para_deletar and isinstance(fornecedor_para_deletar, Fornecedor):
-            if fornecedor_para_deletar in self.__controlador_principal.loja.fornecedores_cadastrados:
-                self.__controlador_principal.loja.fornecedores_cadastrados.remove(fornecedor_para_deletar)
-                return True
+            self.controlador_principal.loja.fornecedor_dao.remove(fornecedor_para_deletar.cnpj)
+            return True
         return False
     
     def busca_fornecedor_por_cnpj(self, cnpj):
-        for fornecedor in self.controlador_principal.loja.fornecedores_cadastrados:
+        fornecedores = self.controlador_principal.loja.fornecedor_dao.get_all()
+        for fornecedor in fornecedores:
             if fornecedor.cnpj == cnpj:
                 return fornecedor
         return None
