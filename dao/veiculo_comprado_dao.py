@@ -3,8 +3,8 @@ from .abstract_dao import BaseDAO
 from ..entidade.veiculo import Veiculo
 
 
-class VeiculoDAO(BaseDAO):
-    def __init__(self, datasource: str = "veiculos.pkl"):
+class VeiculoCompradoDAO(BaseDAO):
+    def __init__(self, datasource: str = "veiculos_comprados.pkl"):
         super().__init__(datasource)
 
     def add(self, veiculo):
@@ -14,7 +14,8 @@ class VeiculoDAO(BaseDAO):
             and isinstance(veiculo.chassi, int)
             and veiculo.chassi > 0
         ):
-            super().add(veiculo.chassi, veiculo)
+            return super().add(veiculo.chassi, veiculo)
+        return False
 
     def update(self, veiculo: Veiculo):
         if (
@@ -23,12 +24,15 @@ class VeiculoDAO(BaseDAO):
             and isinstance(veiculo.chassi, int)
             and veiculo.chassi > 0
         ):
-            super().update(veiculo.chassi, veiculo)
+            return super().update(veiculo.chassi, veiculo)
+        return False
 
     def get(self, key: int):
         if isinstance(key, int) and key > 0:
             return super().get(key)
+        return None
 
     def remove(self, key: int):
         if isinstance(key, int) and key > 0:
             return super().remove(key)
+        return False

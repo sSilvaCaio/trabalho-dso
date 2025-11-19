@@ -13,7 +13,8 @@ class TipoServicoDAO(BaseDAO):
             and isinstance(tipo_servico, TipoServico)
             and isinstance(tipo_servico.nome, str)
         ):
-            super().add(tipo_servico.nome, tipo_servico)
+            return super().add(tipo_servico.nome, tipo_servico)
+        return False
 
     def update(self, tipo_servico: TipoServico):
         if (
@@ -21,12 +22,15 @@ class TipoServicoDAO(BaseDAO):
             and isinstance(tipo_servico, TipoServico)
             and isinstance(tipo_servico.nome, str)
         ):
-            super().update(tipo_servico.nome, tipo_servico)
+            return super().update(tipo_servico.nome, tipo_servico)
+        return False
 
     def get(self, key: str):
         if isinstance(key, str):
             return super().get(key)
+        return None
 
-    def remove(selfself, key: str):
+    def remove(self, key: str):
         if isinstance(key, str):
             return super().remove(key)
+        return False

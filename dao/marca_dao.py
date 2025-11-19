@@ -13,7 +13,8 @@ class MarcaDAO(BaseDAO):
             and isinstance(marca, Marca)
             and isinstance(marca.nome, str)
         ):
-            super().add(marca.nome, marca)
+            return super().add(marca.nome, marca)
+        return False
 
     def update(self, marca: Marca):
         if (
@@ -21,12 +22,15 @@ class MarcaDAO(BaseDAO):
             and isinstance(marca, Marca)
             and isinstance(marca.nome, str)
         ):
-            super().update(marca.nome, marca)
+            return super().update(marca.nome, marca)
+        return False
 
     def get(self, key: str):
         if isinstance(key, str):
             return super().get(key)
+        return None
 
-    def remove(selfself, key: str):
+    def remove(self, key: str):
         if isinstance(key, str):
             return super().remove(key)
+        return False

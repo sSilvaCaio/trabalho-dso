@@ -12,21 +12,27 @@ class ServicoDAO(BaseDAO):
             (servico is not None)
             and isinstance(servico, Servico)
             and isinstance(servico.id, int)
+            and servico.id > 0
         ):
-            super().add(servico.id, Servico)
+            return super().add(servico.id, servico)
+        return False
 
     def update(self, servico: Servico):
         if (
             (servico is not None)
             and isinstance(servico, Servico)
             and isinstance(servico.id, int)
+            and servico.id > 0
         ):
-            super().update(servico.id, servico)
+            return super().update(servico.id, servico)
+        return False
 
-    def get(self, key: str):
-        if isinstance(key, str):
+    def get(self, key: int):
+        if isinstance(key, int) and key > 0:
             return super().get(key)
+        return None
 
-    def remove(selfself, key: str):
-        if isinstance(key, str):
+    def remove(self, key: int):
+        if isinstance(key, int) and key > 0:
             return super().remove(key)
+        return False
