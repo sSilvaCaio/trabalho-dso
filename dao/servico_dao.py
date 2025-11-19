@@ -36,3 +36,6 @@ class ServicoDAO(BaseDAO):
         if isinstance(key, int) and key > 0:
             return super().remove(key)
         return False
+
+    def get_all(self):
+        return super().get_all()

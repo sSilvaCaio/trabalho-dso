@@ -1,11 +1,13 @@
 from entidade.marca import Marca
 from limite.tela_marca import TelaMarca
+from controlador.controlador_principal import ControladorPrincipal
 
 
-class ControladorMarca():
-    def __init__(self, controlador_principal):
+class ControladorMarca:
+    def __init__(self, controlador_principal: ControladorPrincipal):
         self.__tela = TelaMarca(self)
         self.__controlador_principal = controlador_principal
+        self.__dao = self.controlador_principal.marca_dao
 
     @property
     def tela(self):
@@ -14,9 +16,18 @@ class ControladorMarca():
     @property
     def controlador_principal(self):
         return self.__controlador_principal
-    
+
+    @property
+    def dao(self):
+        return self.__dao
+
     def abre_tela_opcoes(self):
-        switcher = {1: self.cadastra_marca, 2: self.lista_marcas, 3: self.altera_marca, 4: self.deleta_marca}
+        switcher = {
+            1: self.cadastra_marca,
+            2: self.lista_marcas,
+            3: self.altera_marca,
+            4: self.deleta_marca,
+        }
         while True:
             opcao = self.__tela.mostra_tela_opcoes()
             if opcao == 0:
@@ -33,15 +44,16 @@ class ControladorMarca():
 
             if not nome:
                 return None
-            
-            if self.busca_marca_por_nome(nome):
-                self.tela.mostra_mensagem_erro('Já existe uma marca com esse nome')
+
+            if self.dao.get_by_nome(nome):  # ← Busca por nome
+                self.tela.mostra_mensagem_erro("Já existe uma marca com esse nome")
                 continue
-            
+
             nova_marca = Marca(nome)
-            self.controlador_principal.loja.marcas.append(nova_marca)
-            self.tela.mostra_mensagem('Marca ' + nome + ' adicionada')
-            return nova_marca
+            if self.dao.add(nova_marca):
+                self.tela.mostra_mensagem("Marca " + nome + " adicionada")
+                return nova_marca
+            return None
 
     def altera_marca(self):
         while True:
@@ -49,26 +61,31 @@ class ControladorMarca():
 
             if not nome_atual or not novo_nome:
                 return None
-            
-            marca = self.busca_marca_por_nome(nome_atual)
+
+            marca = self.dao.get_by_nome(nome_atual)  # ← Busca por nome
 
             if not marca:
-                self.tela.mostra_mensagem_erro('Não existe marca com o nome: ' + nome_atual)
+                self.tela.mostra_mensagem_erro(
+                    "Não existe marca com o nome: " + nome_atual
+                )
                 continue
-            
-            nova_marca = self.busca_marca_por_nome(novo_nome)
-            if nova_marca:
-                self.tela.mostra_mensagem_erro('Já existe uma marca com o nome: ' + novo_nome)
+
+            if self.dao.get_by_nome(novo_nome):
+                self.tela.mostra_mensagem_erro(
+                    "Já existe uma marca com o nome: " + novo_nome
+                )
                 continue
-            
+
             marca.nome = novo_nome
+            if self.dao.update(marca):  # ← Atualiza usando ID
+                self.tela.mostra_mensagem(
+                    f"Nome da marca {nome_atual} foi alterado para {novo_nome}"
+                )
+                return marca
+            return None
 
-            self.tela.mostra_mensagem(f'Nome da marca {nome_atual} foi alterado para {novo_nome}')
-
-            return marca
-    
     def lista_marcas(self):
-        self.tela.mostra_tela_lista(self.controlador_principal.loja.marcas)
+        self.tela.mostra_tela_lista(self.dao.get_all())
 
     def deleta_marca(self):
         while True:
@@ -76,20 +93,14 @@ class ControladorMarca():
 
             if not nome:
                 return None
-            
-            marca = self.busca_marca_por_nome(nome)
+
+            marca = self.dao.get_by_nome(nome)  # ← Busca por nome
 
             if not marca:
-                self.tela.mostra_mensagem_erro('Não existe marca com este nome.')
+                self.tela.mostra_mensagem_erro("Não existe marca com este nome.")
                 continue
-            
-            self.controlador_principal.loja.marcas.remove(marca)
-            self.tela.mostra_mensagem('Marca ' + nome + ' deletada')
-            return True
-    
-    def busca_marca_por_nome(self, nome):
-        for marca in self.controlador_principal.loja.marcas:
-            if nome == marca.nome:
-                return marca
-        return None
-    
+
+            if self.dao.remove(marca.id):  # ← Remove usando ID
+                self.tela.mostra_mensagem("Marca " + nome + " deletada")
+                return True
+            return None

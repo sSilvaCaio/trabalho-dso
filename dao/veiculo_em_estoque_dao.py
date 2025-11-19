@@ -3,8 +3,8 @@ from .abstract_dao import BaseDAO
 from ..entidade.veiculo import Veiculo
 
 
-class VeiculoRegistradoDAO(BaseDAO):
-    def __init__(self, datasource: str = "veiculos_registrados.pkl"):
+class VeiculoEmEstoqueDAO(BaseDAO):
+    def __init__(self, datasource: str = "veiculos_em_estoque.pkl"):
         super().__init__(datasource)
 
     def add(self, veiculo):
@@ -36,3 +36,6 @@ class VeiculoRegistradoDAO(BaseDAO):
         if isinstance(key, int) and key > 0:
             return super().remove(key)
         return False
+
+    def get_all(self):
+        return super().get_all()
