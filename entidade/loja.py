@@ -1,8 +1,12 @@
-from dao.veiculo_cadastrado_dao import VeiculoCadastradoDAO
-from dao.veiculo_em_estoque_dao import VeiculoEmEstoqueDAO
-from dao.marca_dao import MarcaDAO
-from dao.servico_dao import ServicoDAO
-from dao.tipo_servico_dao import TipoServicoDAO
+from ..dao.veiculo_cadastrado_dao import VeiculoCadastradoDAO
+from ..dao.veiculo_em_estoque_dao import VeiculoEmEstoqueDAO
+from ..dao.marca_dao import MarcaDAO
+from ..dao.servico_dao import ServicoDAO
+from ..dao.tipo_servico_dao import TipoServicoDAO
+from ..dao.cliente_dao import ClienteDAO
+from ..dao.fornecedor_dao import FornecedorDAO
+from ..dao.compra_dao import CompraDAO
+from ..dao.venda_dao import VendaDAO
 
 
 class Loja:
@@ -18,14 +22,15 @@ class Loja:
         if isinstance(endereco, str):
             self.__endereco = endereco
 
-        self.__veiculo_cadastrado_dao = VeiculoCadastradoDAO()
-        self.__veiculo_em_estoque_dao = VeiculoEmEstoqueDAO()
-        self.__fornecedores_cadastrados = []
-        self.__clientes_cadastrados = []
-        self.__servico_dao = ServicoDAO()
-        self.__transacoes = []
-        self.__marca_dao = MarcaDAO()
-        self.__tipo_servico_dao = TipoServicoDAO()
+        self.__veiculos_cadastrados_dao = VeiculoCadastradoDAO()
+        self.__veiculos_em_estoque_dao = VeiculoEmEstoqueDAO()
+        self.__fornecedores_dao = FornecedorDAO()
+        self.__clientes_dao = ClienteDAO()
+        self.__servicos_dao = ServicoDAO()
+        self.__compra_dao = CompraDAO()
+        self.__venda_dao = VendaDAO()
+        self.__marcas_dao = MarcaDAO()
+        self.__tipos_servico_dao = TipoServicoDAO()
 
     def __str__(self):
         return (
@@ -70,26 +75,24 @@ class Loja:
         return self.__veiculo_cadastrado_dao
 
     @property
-    def veiculo_em_estoque_dao(self):
-        return self.__veiculo_em_estoque_dao
+    def veiculos_em_estoque_dao(self):
+        return self.__veiculos_em_estoque_dao
 
     @property
     def fornecedores_cadastrados(self):
-        return self.__fornecedores_cadastrados
+        return self.__fornecedores_dao.get_all()
 
-    @fornecedores_cadastrados.setter
-    def fornecedores_cadastrados(self, fornecedores: list):
-        if isinstance(fornecedores, list):
-            self.__fornecedores_cadastrados = fornecedores
+    @property
+    def fornecedor_dao(self):
+        return self.__fornecedores_dao
 
     @property
     def clientes_cadastrados(self):
-        return self.__clientes_cadastrados
+        return self.__clientes_dao.get_all()
 
-    @clientes_cadastrados.setter
-    def clientes_cadastrados(self, clientes: list):
-        if isinstance(clientes, list):
-            self.__clientes_cadastrados = clientes
+    @property
+    def cliente_dao(self):
+        return self.__clientes_dao
 
     @property
     def servico_dao(self):
@@ -97,7 +100,15 @@ class Loja:
 
     @property
     def transacoes(self):
-        return self.__transacoes
+        return self.__venda_dao.get_all() + self.__compra_dao.get_all()
+
+    @property
+    def compra_dao(self):
+        return self.__compra_dao
+
+    @property
+    def venda_dao(self):
+        return self.__venda_dao
 
     @property
     def marca_dao(self):

@@ -39,7 +39,8 @@ class ControladorVenda:
                 self.tela.mostra_mensagem_erro("Veículo não encontrado com este chassi.")
                 continue
             
-            if veiculo not in self.controlador_principal.loja.veiculos_em_estoque:
+            estoque = self.controlador_principal.loja.veiculos_em_estoque_dao.get_all()
+            if veiculo not in estoque:
                 self.tela.mostra_mensagem_erro("Veículo não está no estoque.")
                 continue
             
@@ -55,18 +56,18 @@ class ControladorVenda:
                 data=dados_venda['data']
             )
             
-            self.controlador_principal.loja.transacoes.append(nova_venda)
-            self.controlador_principal.loja.veiculos_em_estoque.remove(veiculo)
+            self.controlador_principal.loja.venda_dao.add(nova_venda)
+            self.controlador_principal.loja.veiculos_em_estoque_dao.remove(veiculo.chassi)
             
             self.tela.mostra_mensagem("Venda registrada com sucesso!")
             return nova_venda
     
     def lista_vendas(self):
-        vendas = [t for t in self.controlador_principal.loja.transacoes if isinstance(t, Venda)]
+        vendas = self.controlador_principal.loja.venda_dao.get_all()
         if not vendas:
             self.tela.mostra_mensagem("Nenhuma venda registrada.")
             return None
-        
+
         self.tela.mostra_tela_lista(vendas)
     
     def altera_venda(self):
@@ -88,14 +89,16 @@ class ControladorVenda:
                     self.tela.mostra_mensagem_erro("Veículo não encontrado com este chassi.")
                     continue
                 
-                if veiculo not in self.controlador_principal.loja.veiculos_em_estoque:
+                estoque = self.controlador_principal.loja.veiculos_em_estoque_dao.get_all()
+                if veiculo not in estoque:
                     self.tela.mostra_mensagem_erro("Veículo não está no estoque.")
                     continue
                 
-                if veiculo_antigo not in self.controlador_principal.loja.veiculos_em_estoque:
-                    self.controlador_principal.loja.veiculos_em_estoque.append(veiculo_antigo)
-                
-                self.controlador_principal.loja.veiculos_em_estoque.remove(veiculo)
+                estoque = self.controlador_principal.loja.veiculos_em_estoque_dao.get_all()
+                if veiculo_antigo.chassi not in [v.chassi for v in estoque]:
+                    self.controlador_principal.loja.veiculos_em_estoque_dao.add(veiculo_antigo.chassi, veiculo_antigo)
+
+                self.controlador_principal.loja.veiculos_em_estoque_dao.remove(veiculo.chassi)
                 venda.veiculo = veiculo
             
             if novos_dados['cpf_cliente'] != ' ':
@@ -111,6 +114,7 @@ class ControladorVenda:
             if novos_dados['data'] != ' ':
                 venda.data = novos_dados['data']
             
+            self.controlador_principal.loja.venda_dao.update(venda)
             self.tela.mostra_mensagem('Venda alterada.')
             return venda
     
@@ -125,8 +129,9 @@ class ControladorVenda:
                 self.tela.mostra_mensagem_erro("Não existe venda com este ID.")
                 continue
             
-            if venda.veiculo not in self.controlador_principal.loja.veiculos_em_estoque:
-                self.controlador_principal.loja.veiculos_em_estoque.append(venda.veiculo)
+            estoque = self.controlador_principal.loja.veiculos_em_estoque_dao.get_all()
+            if venda.veiculo.chassi not in [v.chassi for v in estoque]:
+                self.controlador_principal.loja.veiculos_em_estoque_dao.add(venda.veiculo.chassi, venda.veiculo)
             
             removido_com_sucesso = self.deleta_venda_por_objeto(venda)
             if removido_com_sucesso:
@@ -138,25 +143,22 @@ class ControladorVenda:
     
     def deleta_venda_por_objeto(self, venda_para_deletar: Venda):
         if venda_para_deletar and isinstance(venda_para_deletar, Venda):
-            if venda_para_deletar in self.controlador_principal.loja.transacoes:
-                self.controlador_principal.loja.transacoes.remove(venda_para_deletar)
-                return True
+            self.controlador_principal.loja.venda_dao.remove(venda_para_deletar.id)
+            return True
         return False
     
     def busca_venda_por_id(self, id_venda):
-        for transacao in self.controlador_principal.loja.transacoes:
-            if isinstance(transacao, Venda) and transacao.id == id_venda:
-                return transacao
-        return None
+        if not id_venda:
+            return None
+        return self.controlador_principal.loja.venda_dao.get(id_venda)
     
     def busca_vendas_por_cliente(self):
         while True:
             cpf_cliente = self.tela.mostra_tela_busca_cliente()
             if not cpf_cliente:
                 return None
-            
-            vendas_cliente = [t for t in self.controlador_principal.loja.transacoes 
-                             if isinstance(t, Venda) and t.cliente.cpf == cpf_cliente]
+            vendas_cliente = [t for t in self.controlador_principal.loja.venda_dao.get_all()
+                             if t.cliente.cpf == cpf_cliente]
             
             if not vendas_cliente:
                 self.tela.mostra_mensagem_erro("Nenhuma venda encontrada para este cliente.")

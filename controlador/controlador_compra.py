@@ -38,9 +38,11 @@ class ControladorCompra:
             if not veiculo:
                 self.tela.mostra_mensagem_erro("Veículo não encontrado com este chassi.")
                 continue
-            elif veiculo in self.controlador_principal.loja.veiculos_em_estoque:
-                self.tela.mostra_mensagem_erro("Veículo já está no estoque")
-                continue
+            else:
+                estoque = self.controlador_principal.loja.veiculos_em_estoque_dao.get_all()
+                if veiculo in estoque:
+                    self.tela.mostra_mensagem_erro("Veículo já está no estoque")
+                    continue
             
             fornecedor = self.controlador_principal.controlador_fornecedor.busca_fornecedor_por_cnpj(dados_compra['cnpj_fornecedor'])
             if not fornecedor:
@@ -54,18 +56,18 @@ class ControladorCompra:
                 data=dados_compra['data']
             )
             
-            self.controlador_principal.loja.transacoes.append(nova_compra)    
-            self.controlador_principal.loja.veiculos_em_estoque.append(veiculo)
+            self.controlador_principal.loja.compra_dao.add(nova_compra)
+            self.controlador_principal.loja.veiculos_em_estoque_dao.add(veiculo.chassi, veiculo)
             
             self.tela.mostra_mensagem("Compra registrada com sucesso!")
             return nova_compra
     
     def lista_compras(self):
-        compras = [t for t in self.controlador_principal.loja.transacoes if isinstance(t, Compra)]
+        compras = self.controlador_principal.loja.compra_dao.get_all()
         if not compras:
             self.tela.mostra_mensagem("Nenhuma compra registrada.")
             return None
-        
+
         self.tela.mostra_tela_lista(compras)
     
     def altera_compra(self):
@@ -99,6 +101,7 @@ class ControladorCompra:
             if novos_dados['data'] != ' ':
                 compra.data = novos_dados['data']
             
+            self.controlador_principal.loja.compra_dao.update(compra)
             self.tela.mostra_mensagem('Compra alterada.')
             return compra
     
@@ -113,8 +116,9 @@ class ControladorCompra:
                 self.tela.mostra_mensagem_erro("Não existe compra com este ID.")
                 continue
             
-            if compra.veiculo in self.controlador_principal.loja.veiculos_em_estoque:
-                self.controlador_principal.loja.veiculos_em_estoque.remove(compra.veiculo)
+            estoque = self.controlador_principal.loja.veiculos_em_estoque_dao.get_all()
+            if compra.veiculo.chassi in [v.chassi for v in estoque]:
+                self.controlador_principal.loja.veiculos_em_estoque_dao.remove(compra.veiculo.chassi)
             
             removido_com_sucesso = self.deleta_compra_por_objeto(compra)
             if removido_com_sucesso:
@@ -126,25 +130,22 @@ class ControladorCompra:
     
     def deleta_compra_por_objeto(self, compra_para_deletar: Compra):
         if compra_para_deletar and isinstance(compra_para_deletar, Compra):
-            if compra_para_deletar in self.controlador_principal.loja.transacoes:
-                self.controlador_principal.loja.transacoes.remove(compra_para_deletar)
-                return True
+            self.controlador_principal.loja.compra_dao.remove(compra_para_deletar.id)
+            return True
         return False
     
     def busca_compra_por_id(self, id_compra):
-        for transacao in self.controlador_principal.loja.transacoes:
-            if isinstance(transacao, Compra) and transacao.id == id_compra:
-                return transacao
-        return None
+        if not id_compra:
+            return None
+        return self.controlador_principal.loja.compra_dao.get(id_compra)
     
     def busca_compras_por_fornecedor(self):
         while True:
             cnpj_fornecedor = self.tela.mostra_tela_busca_fornecedor()
             if not cnpj_fornecedor:
                 return None
-            
-            compras_fornecedor = [t for t in self.controlador_principal.loja.transacoes 
-                                  if isinstance(t, Compra) and t.fornecedor.cnpj == cnpj_fornecedor]
+            compras_fornecedor = [t for t in self.controlador_principal.loja.compra_dao.get_all()
+                                  if t.fornecedor.cnpj == cnpj_fornecedor]
             
             if not compras_fornecedor:
                 self.tela.mostra_mensagem_erro("Nenhuma compra encontrada para este fornecedor.")

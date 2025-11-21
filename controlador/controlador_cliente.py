@@ -45,8 +45,13 @@ class ControladorCliente:
                 sexo=dados_cliente["sexo"],
                 cpf=dados_cliente["cpf"],
             )
-            
-            self.controlador_principal.loja.clientes_cadastrados.append(novo_cliente)
+            # Persiste via DAO
+            try:
+                self.controlador_principal.loja.cliente_dao.add(novo_cliente)
+            except Exception:
+                self.tela.mostra_mensagem_erro('Erro ao cadastrar cliente.')
+                return None
+
             self.tela.mostra_mensagem("Cliente cadastrado com sucesso.")
             return novo_cliente
     
@@ -93,18 +98,19 @@ class ControladorCliente:
             if novos_dados['idade'] != ' ': cliente.idade = novos_dados["idade"]
             if novos_dados['sexo'] != ' ': cliente.sexo = novos_dados["sexo"]
             
+            self.controlador_principal.loja.cliente_dao.update(cliente)
             self.tela.mostra_mensagem('Cliente alterado.')
             return cliente
     
     def deleta_cliente_por_objeto(self, cliente_para_deletar: Cliente):
         if cliente_para_deletar and isinstance(cliente_para_deletar, Cliente):
-            if cliente_para_deletar in self.__controlador_principal.loja.clientes_cadastrados:
-                self.__controlador_principal.loja.clientes_cadastrados.remove(cliente_para_deletar)
-                return True
+            self.controlador_principal.loja.cliente_dao.remove(cliente_para_deletar.cpf)
+            return True
         return False
     
     def busca_cliente_por_cpf(self, cpf):
-        for cliente in self.controlador_principal.loja.clientes_cadastrados:
+        clientes = self.controlador_principal.loja.cliente_dao.get_all()
+        for cliente in clientes:
             if cliente.cpf == cpf:
                 return cliente
         return None
