@@ -5,7 +5,7 @@ import pickle
 class BaseDAO(ABC):
     @abstractmethod
     def __init__(self, datasource=""):
-        self.datasource = datasource
+        self.__datasource = datasource
         self.__cache = {}
         try:
             self.__load()
@@ -13,10 +13,10 @@ class BaseDAO(ABC):
             self.__dump()
 
     def __dump(self):
-        pickle.dump(self.__cache, open(self.__datasource, 'wb'))
+        pickle.dump(self.__cache, open(self.__datasource, "wb"))
 
     def __load(self):
-        self.__cache = pickle.load(open(self.__datasource,'rb'))
+        self.__cache = pickle.load(open(self.__datasource, "rb"))
 
     def add(self, key, obj):
         if key in self.__cache:

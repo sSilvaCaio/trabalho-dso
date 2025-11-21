@@ -1,13 +1,12 @@
 from entidade.marca import Marca
 from limite.tela_marca import TelaMarca
-from controlador.controlador_principal import ControladorPrincipal
 
 
 class ControladorMarca:
-    def __init__(self, controlador_principal: ControladorPrincipal):
+    def __init__(self, controlador_principal):
         self.__tela = TelaMarca(self)
         self.__controlador_principal = controlador_principal
-        self.__dao = self.controlador_principal.marca_dao
+        self.__dao = self.controlador_principal.loja.marca_dao
 
     @property
     def tela(self):
@@ -85,7 +84,9 @@ class ControladorMarca:
             return None
 
     def lista_marcas(self):
-        self.tela.mostra_tela_lista(self.dao.get_all())
+        marcas = self.dao.get_all()
+        marcas_dict = [{"id": marca.id, "nome": marca.nome} for marca in marcas]
+        self.tela.mostra_tela_lista(marcas_dict)
 
     def deleta_marca(self):
         while True:
@@ -94,13 +95,13 @@ class ControladorMarca:
             if not nome:
                 return None
 
-            marca = self.dao.get_by_nome(nome)  # ← Busca por nome
+            marca = self.dao.get_by_nome(nome)
 
             if not marca:
                 self.tela.mostra_mensagem_erro("Não existe marca com este nome.")
                 continue
 
-            if self.dao.remove(marca.id):  # ← Remove usando ID
+            if self.dao.remove(marca.id):
                 self.tela.mostra_mensagem("Marca " + nome + " deletada")
                 return True
             return None

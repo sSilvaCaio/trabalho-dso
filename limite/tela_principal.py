@@ -13,9 +13,9 @@ class TelaPrincipal(TelaAbstrata):
         print("----Sistema Finalizado!----")
 
     def mostra_tela_opcoes(self):
-        print("\n" + "="*30)
+        print("\n" + "=" * 30)
         print("    LOJA DE VEÍCULOS    ")
-        print("="*30)
+        print("=" * 30)
         print("--- MÓDULOS PRINCIPAIS ---")
         print("1 - Gerenciar Veículos")
         print("2 - Gerenciar Clientes")
@@ -29,5 +29,7 @@ class TelaPrincipal(TelaAbstrata):
         print("8 - Gerenciar Tipos de Serviço")
         print("9 - Ver Relatórios")
         print("0 - Sair do Sistema")
-        
-        return self.le_num_inteiro("Escolha uma opção: ", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+        return self.le_num_inteiro(
+            "Escolha uma opção: ", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        )

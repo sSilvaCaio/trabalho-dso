@@ -1,52 +1,159 @@
+import FreeSimpleGUI as sg
 from .tela_abstrata import TelaAbstrata
 
 
 class TelaMarca(TelaAbstrata):
     def __init__(self, controlador):
         self.__controlador = controlador
+        sg.theme("DarkBlue3")
 
     def mostra_tela_cadastro(self):
-        print('\n--- Cadastro marca ---')
-        print('\n(Deixe em branco para voltar)')
-        nome = input('Nome da marca: ').strip()
-        if nome:
-            return nome
-            
-        return None
-    def mostra_tela_alteracao(self):
-        print('\n--- Alterar marca ---')
-        print('\n(Deixe em branco para voltar)')
-        while True:
-            nome = input('Nome da marca que deseja alterar: ').strip()
-            novo_nome = input('Novo nome da marca: ').strip()
+        layout = [
+            [sg.Text("--- Cadastro Marca ---", font=("Arial", 14, "bold"))],
+            [
+                sg.Text("Nome da marca:", size=(20, 1)),
+                sg.InputText(key="nome", size=(20, 1)),
+            ],
+            [sg.Button("Cadastrar"), sg.Button("Voltar")],
+        ]
 
-            if nome and novo_nome:
-                return nome, novo_nome
-            
-            if not nome and not novo_nome:
+        janela = sg.Window("Cadastro Marca", layout)
+
+        while True:
+            evento, valores = janela.read()
+
+            if evento == sg.WINDOW_CLOSED or evento == "Voltar":
+                janela.close()
+                return None
+
+            if evento == "Cadastrar":
+                nome = valores["nome"].strip()
+                if nome:
+                    janela.close()
+                    return nome
+                else:
+                    sg.popup_error("Nome não pode estar vazio!")
+
+    def mostra_tela_alteracao(self):
+
+        layout = [
+            [sg.Text("--- Alterar Marca ---", font=("Arial", 14, "bold"))],
+            [
+                sg.Text("Nome da marca a alterar:", size=(25, 1)),
+                sg.InputText(key="nome_atual", size=(20, 1)),
+            ],
+            [
+                sg.Text("Novo nome da marca:", size=(25, 1)),
+                sg.InputText(key="novo_nome", size=(20, 1)),
+            ],
+            [sg.Button("Alterar"), sg.Button("Voltar")],
+        ]
+
+        janela = sg.Window("Alterar Marca", layout)
+
+        while True:
+            evento, valores = janela.read()
+
+            if evento == sg.WINDOW_CLOSED or evento == "Voltar":
+                janela.close()
                 return None, None
-            
-            self.mostra_mensagem_erro('Todos os campos devem ser preenchidos.')
+
+            if evento == "Alterar":
+                nome = valores["nome_atual"].strip()
+                novo_nome = valores["novo_nome"].strip()
+
+                if nome and novo_nome:
+                    janela.close()
+                    return nome, novo_nome
+                else:
+                    sg.popup_error("Todos os campos devem ser preenchidos!")
 
     def mostra_tela_lista(self, lista_marcas):
-        print('\n--- Lista de marcas ---')
-        for i in range(len(lista_marcas)):
-            print(f'Marca {i+1}: {lista_marcas[i].__str__()}')
-            print('---------------------')
+        if not lista_marcas:
+            sg.popup_info("Nenhuma marca cadastrada!")
+            return
+
+        # Converte lista de dicionários em strings para exibição
+        marcas_str = [
+            f"ID: {marca['id']} - Nome: {marca['nome']}" for marca in lista_marcas
+        ]
+
+        layout = [
+            [sg.Text("--- Lista de Marcas ---", font=("Arial", 14, "bold"))],
+            [sg.Listbox(values=marcas_str, size=(40, 10), key="lista")],
+            [sg.Button("Fechar")],
+        ]
+
+        janela = sg.Window("Lista de Marcas", layout)
+
+        while True:
+            evento, valores = janela.read()
+
+            if evento == sg.WINDOW_CLOSED or evento == "Fechar":
+                janela.close()
+                break
 
     def mostra_tela_deletar(self):
-        print('\n--- Deletar marca ---')
-        print('\n(Deixe em branco para voltar)')
-        nome = input('Nome da marca para deletar: ')
-        return nome
+        layout = [
+            [sg.Text("--- Deletar Marca ---", font=("Arial", 14, "bold"))],
+            [
+                sg.Text("Nome da marca para deletar:", size=(25, 1)),
+                sg.InputText(key="nome", size=(20, 1)),
+            ],
+            [sg.Button("Deletar"), sg.Button("Voltar")],
+        ]
 
+        janela = sg.Window("Deletar Marca", layout)
+
+        while True:
+            evento, valores = janela.read()
+
+            if evento == sg.WINDOW_CLOSED or evento == "Voltar":
+                janela.close()
+                return None
+
+            if evento == "Deletar":
+                nome = valores["nome"].strip()
+                if nome:
+                    janela.close()
+                    return nome
+                else:
+                    sg.popup_error("Nome não pode estar vazio!")
 
     def mostra_tela_opcoes(self):
-        print("\nEscolha o que você quer fazer:")
-        print("1: Cadastrar")
-        print("2: Listar")
-        print("3: Alterar")
-        print("4: Deletar")
-        print("0: Voltar")
+        layout = [
+            [sg.Text("--- Menu Marcas ---", font=("Arial", 14, "bold"))],
+            [sg.Button("Cadastrar", size=(15, 2))],
+            [sg.Button("Listar", size=(15, 2))],
+            [sg.Button("Alterar", size=(15, 2))],
+            [sg.Button("Deletar", size=(15, 2))],
+            [sg.Button("Voltar", size=(15, 2))],
+        ]
 
-        return self.le_num_inteiro("Escolha uma opção: ", [0, 1, 2, 3, 4])
+        janela = sg.Window("Menu Marcas", layout)
+
+        while True:
+            evento, valores = janela.read()
+
+            if evento == sg.WINDOW_CLOSED or evento == "Voltar":
+                janela.close()
+                return 0
+
+            if evento == "Cadastrar":
+                janela.close()
+                return 1
+            elif evento == "Listar":
+                janela.close()
+                return 2
+            elif evento == "Alterar":
+                janela.close()
+                return 3
+            elif evento == "Deletar":
+                janela.close()
+                return 4
+
+    def mostra_mensagem_erro(self, mensagem):
+        sg.popup_error(mensagem)
+
+    def mostra_mensagem(self, mensagem):
+        sg.popup_ok(mensagem)

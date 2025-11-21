@@ -1,6 +1,6 @@
 from .abstract_dao import BaseDAO
 
-from ..entidade.veiculo import Veiculo
+from entidade.veiculo import Veiculo
 
 
 class VeiculoEmEstoqueDAO(BaseDAO):

@@ -1,56 +1,157 @@
+import FreeSimpleGUI as sg
 from .tela_abstrata import TelaAbstrata
 
 
 class TelaTipoServico(TelaAbstrata):
     def __init__(self, controlador):
         self.__controlador = controlador
+        sg.theme("DarkBlue3")
 
     def mostra_tela_opcoes(self):
-        print("\nEscolha o que você quer fazer:")
-        print("1: Cadastrar")
-        print("2: Listar")
-        print("3: Alterar")
-        print("4: Deletar")
-        print("0: Voltar")
+        layout = [
+            [sg.Text("--- Menu Tipos de Serviço ---", font=("Arial", 14, "bold"))],
+            [sg.Button("Cadastrar", size=(15, 2))],
+            [sg.Button("Listar", size=(15, 2))],
+            [sg.Button("Alterar", size=(15, 2))],
+            [sg.Button("Deletar", size=(15, 2))],
+            [sg.Button("Voltar", size=(15, 2))],
+        ]
 
-        return self.le_num_inteiro("Escolha uma opção: ", [0, 1, 2, 3, 4])
+        janela = sg.Window("Menu Tipos de Serviço", layout)
+
+        while True:
+            evento, valores = janela.read()
+
+            if evento == sg.WINDOW_CLOSED or evento == "Voltar":
+                janela.close()
+                return 0
+
+            if evento == "Cadastrar":
+                janela.close()
+                return 1
+            elif evento == "Listar":
+                janela.close()
+                return 2
+            elif evento == "Alterar":
+                janela.close()
+                return 3
+            elif evento == "Deletar":
+                janela.close()
+                return 4
 
     def mostra_tela_cadastro(self):
-        print('\n--- Cadastro tipo de serviço ---')
-        print('\n(Deixe em branco para voltar)')
+        layout = [
+            [sg.Text("--- Cadastro Tipo de Serviço ---", font=("Arial", 14, "bold"))],
+            [
+                sg.Text("Nome do tipo de serviço:", size=(25, 1)),
+                sg.InputText(key="nome", size=(20, 1)),
+            ],
+            [sg.Button("Cadastrar"), sg.Button("Voltar")],
+        ]
+
+        janela = sg.Window("Cadastro Tipo de Serviço", layout)
+
         while True:
-            nome = input('Nome do tipo de serviço: ').strip()
-            if nome:
-                return nome
-            
-            return None
+            evento, valores = janela.read()
+
+            if evento == sg.WINDOW_CLOSED or evento == "Voltar":
+                janela.close()
+                return None
+
+            if evento == "Cadastrar":
+                nome = valores["nome"].strip()
+                if nome:
+                    janela.close()
+                    return nome
+                else:
+                    sg.popup_error("Nome não pode estar vazio!")
 
     def mostra_tela_alteracao(self):
-        print('\n--- Alterar tipo de serviço ---')
-        print('\n(Deixe em branco para voltar)')
-        while True:
-            nome = input('Nome do tipo de serviço que deseja alterar: ').strip()
-            novo_nome = input('Novo nome do tipo de serviço: ').strip()
+        layout = [
+            [sg.Text("--- Alterar Tipo de Serviço ---", font=("Arial", 14, "bold"))],
+            [
+                sg.Text("Nome atual:", size=(25, 1)),
+                sg.InputText(key="nome_atual", size=(20, 1)),
+            ],
+            [
+                sg.Text("Novo nome:", size=(25, 1)),
+                sg.InputText(key="novo_nome", size=(20, 1)),
+            ],
+            [sg.Button("Alterar"), sg.Button("Voltar")],
+        ]
 
-            if nome and novo_nome:
-                return nome, novo_nome
-            
-            if not nome and not novo_nome:
+        janela = sg.Window("Alterar Tipo de Serviço", layout)
+
+        while True:
+            evento, valores = janela.read()
+
+            if evento == sg.WINDOW_CLOSED or evento == "Voltar":
+                janela.close()
                 return None, None
-            
-            self.mostra_mensagem_erro('Para fazer a alteração, todos os campos devem ser preenchidos.')
+
+            if evento == "Alterar":
+                nome = valores["nome_atual"].strip()
+                novo_nome = valores["novo_nome"].strip()
+
+                if nome and novo_nome:
+                    janela.close()
+                    return nome, novo_nome
+                else:
+                    sg.popup_error("Todos os campos devem ser preenchidos!")
 
     def mostra_tela_lista(self, lista_tipos_servico):
-        print('\n--- Lista de tipos de serviço ---')
-        for i in range(len(lista_tipos_servico)):
-            print(f'{i+1}: {lista_tipos_servico[i].__str__()}')
-            print('---------------------')
+        if not lista_tipos_servico:
+            sg.popup_info("Nenhum tipo de serviço cadastrado!")
+            return
+
+        tipos_str = [
+            f"ID: {tipo['id']} - Nome: {tipo['nome']}" for tipo in lista_tipos_servico
+        ]
+
+        layout = [
+            [sg.Text("--- Lista de Tipos de Serviço ---", font=("Arial", 14, "bold"))],
+            [sg.Listbox(values=tipos_str, size=(40, 10), key="lista")],
+            [sg.Button("Fechar")],
+        ]
+
+        janela = sg.Window("Lista de Tipos de Serviço", layout)
+
+        while True:
+            evento, valores = janela.read()
+
+            if evento == sg.WINDOW_CLOSED or evento == "Fechar":
+                janela.close()
+                break
 
     def mostra_tela_deletar(self):
-        print('\n--- Deletar tipo de serviço ---')
-        print('\n(Deixe em branco para voltar)')
-        nome = input('Nome do tipo de serviço para deletar: ')
-        if not nome:
-            return None
-        return nome
+        layout = [
+            [sg.Text("--- Deletar Tipo de Serviço ---", font=("Arial", 14, "bold"))],
+            [
+                sg.Text("Nome do tipo de serviço:", size=(25, 1)),
+                sg.InputText(key="nome", size=(20, 1)),
+            ],
+            [sg.Button("Deletar"), sg.Button("Voltar")],
+        ]
 
+        janela = sg.Window("Deletar Tipo de Serviço", layout)
+
+        while True:
+            evento, valores = janela.read()
+
+            if evento == sg.WINDOW_CLOSED or evento == "Voltar":
+                janela.close()
+                return None
+
+            if evento == "Deletar":
+                nome = valores["nome"].strip()
+                if nome:
+                    janela.close()
+                    return nome
+                else:
+                    sg.popup_error("Nome não pode estar vazio!")
+
+    def mostra_mensagem_erro(self, mensagem):
+        sg.popup_error(mensagem)
+
+    def mostra_mensagem(self, mensagem):
+        sg.popup_ok(mensagem)

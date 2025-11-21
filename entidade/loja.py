@@ -1,8 +1,8 @@
-from ..dao.veiculo_cadastrado_dao import VeiculoCadastradoDAO
-from ..dao.veiculo_em_estoque_dao import VeiculoEmEstoqueDAO
-from ..dao.marca_dao import MarcaDAO
-from ..dao.servico_dao import ServicoDAO
-from ..dao.tipo_servico_dao import TipoServicoDAO
+from dao.veiculo_cadastrado_dao import VeiculoCadastradoDAO
+from dao.veiculo_em_estoque_dao import VeiculoEmEstoqueDAO
+from dao.marca_dao import MarcaDAO
+from dao.servico_dao import ServicoDAO
+from dao.tipo_servico_dao import TipoServicoDAO
 
 
 class Loja:
@@ -18,14 +18,14 @@ class Loja:
         if isinstance(endereco, str):
             self.__endereco = endereco
 
-        self.__veiculos_cadastrados_dao = VeiculoCadastradoDAO()
-        self.__veiculos_em_estoque_dao = VeiculoEmEstoqueDAO()
+        self.__veiculo_cadastrado_dao = VeiculoCadastradoDAO()
+        self.__veiculo_em_estoque_dao = VeiculoEmEstoqueDAO()
         self.__fornecedores_cadastrados = []
         self.__clientes_cadastrados = []
-        self.__servicos_dao = ServicoDAO()
+        self.__servico_dao = ServicoDAO()
         self.__transacoes = []
-        self.__marcas_dao = MarcaDAO()
-        self.__tipos_servico_dao = TipoServicoDAO()
+        self.__marca_dao = MarcaDAO()
+        self.__tipo_servico_dao = TipoServicoDAO()
 
     def __str__(self):
         return (
@@ -66,12 +66,12 @@ class Loja:
             self.__endereco = endereco
 
     @property
-    def veiculos_cadastrados_dao(self):
-        return self.__veiculos_cadastrados_dao
+    def veiculo_cadastrado_dao(self):
+        return self.__veiculo_cadastrado_dao
 
     @property
-    def veiculos_em_estoque_dao(self):
-        return self.__veiculos_em_estoque_dao
+    def veiculo_em_estoque_dao(self):
+        return self.__veiculo_em_estoque_dao
 
     @property
     def fornecedores_cadastrados(self):
@@ -92,17 +92,17 @@ class Loja:
             self.__clientes_cadastrados = clientes
 
     @property
-    def servicos_dao(self):
-        return self.__servicos_dao
+    def servico_dao(self):
+        return self.__servico_dao
 
     @property
     def transacoes(self):
         return self.__transacoes
 
     @property
-    def marcas_dao(self):
-        return self.__marcas_dao
+    def marca_dao(self):
+        return self.__marca_dao
 
     @property
-    def tipos_servico_dao(self):
-        return self.__tipos_servico_dao
+    def tipo_servico_dao(self):
+        return self.__tipo_servico_dao

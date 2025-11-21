@@ -1,6 +1,6 @@
 from .abstract_dao import BaseDAO
 
-from ..entidade.tipo_servico import TipoServico
+from entidade.tipo_servico import TipoServico
 
 
 class TipoServicoDAO(BaseDAO):

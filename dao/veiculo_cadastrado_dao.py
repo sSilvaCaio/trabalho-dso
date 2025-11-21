@@ -1,11 +1,11 @@
 from .abstract_dao import BaseDAO
 
-from ..entidade.veiculo import Veiculo
+from entidade.veiculo import Veiculo
 
 
 class VeiculoCadastradoDAO(BaseDAO):
-    def __init__(self, datasource: str = "veiculos_cadastrados.pkl"):
-        super().__init__(datasource)
+    def __init__(self):
+        super().__init__("veiculos_cadastrados.pkl")
 
     def add(self, veiculo):
         if (

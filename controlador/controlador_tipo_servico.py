@@ -1,13 +1,12 @@
 from entidade.tipo_servico import TipoServico
 from limite.tela_tipo_servico import TelaTipoServico
-from controlador.controlador_principal import ControladorPrincipal
 
 
 class ControladorTipoServico:
-    def __init__(self, controlador_principal: ControladorPrincipal):
+    def __init__(self, controlador_principal):
         self.__tela = TelaTipoServico(self)
         self.__controlador_principal = controlador_principal
-        self.__dao = self.controlador_principal.tipo_servico_dao
+        self.__dao = self.controlador_principal.loja.tipo_servico_dao
 
     @property
     def tela(self):
@@ -87,7 +86,9 @@ class ControladorTipoServico:
             return None
 
     def lista_tipos_servico(self):
-        self.tela.mostra_tela_lista(self.dao.get_all())
+        tipos = self.dao.get_all()
+        tipos_dict = [{"id": tipo.id, "nome": tipo.nome} for tipo in tipos]
+        self.tela.mostra_tela_lista(tipos_dict)
 
     def deleta_tipo_servico(self):
         while True:

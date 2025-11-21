@@ -1,6 +1,6 @@
 from .abstract_dao import BaseDAO
 
-from ..entidade.marca import Marca
+from entidade.marca import Marca
 
 
 class MarcaDAO(BaseDAO):
