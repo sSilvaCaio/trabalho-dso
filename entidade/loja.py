@@ -80,7 +80,7 @@ class Loja:
 
     @property
     def fornecedores_cadastrados(self):
-        return self.__fornecedores_dao.get_all()
+        return self.__fornecedores_dao
 
     @property
     def fornecedor_dao(self):
@@ -88,7 +88,7 @@ class Loja:
 
     @property
     def clientes_cadastrados(self):
-        return self.__clientes_dao.get_all()
+        return self.__clientes_dao
 
     @property
     def cliente_dao(self):
@@ -100,7 +100,7 @@ class Loja:
 
     @property
     def transacoes(self):
-        return self.__venda_dao.get_all() + self.__compra_dao.get_all()
+        return (self.__compra_dao, self.__venda_dao)
 
     @property
     def compra_dao(self):
