@@ -56,7 +56,7 @@ class ControladorCliente:
             return novo_cliente
     
     def lista_clientes(self):
-        clientes = self.controlador_principal.loja.clientes_cadastrados
+        clientes = self.controlador_principal.loja.cliente_dao.get_all()
         if not clientes:
             self.tela.mostra_mensagem("Nenhum cliente cadastrado.")
             return None
