@@ -1,105 +1,169 @@
-from limite.tela_abstrata import TelaAbstrata
+from .tela_abstrata import TelaAbstrata
+import FreeSimpleGUI as sg
+
 
 class TelaCompra(TelaAbstrata):
     def __init__(self, controlador):
         self.__controlador = controlador
-    
+        sg.theme("DarkBlue3")
+
     def mostra_tela_opcoes(self):
-        print("\nEscolha o que você quer fazer:")
-        print("1: Registrar Compra")
-        print("2: Listar Compras")
-        print("3: Alterar Compra")
-        print("4: Deletar Compra")
-        print("0: Voltar")
-        return self.le_num_inteiro("Escolha uma opção: ", [0, 1, 2, 3, 4])
-    
+        layout = [
+            [sg.Text("--- Menu Compras ---", font=("Arial", 14, "bold"))],
+            [sg.Button("Registrar Compra", size=(20, 2))],
+            [sg.Button("Listar Compras", size=(20, 2))],
+            [sg.Button("Alterar Compra", size=(20, 2))],
+            [sg.Button("Deletar Compra", size=(20, 2))],
+            [sg.Button("Voltar", size=(20, 2))],
+        ]
+
+        janela = sg.Window("Menu Compras", layout)
+        while True:
+            evento, valores = janela.read()
+            if evento == sg.WINDOW_CLOSED or evento == "Voltar":
+                janela.close()
+                return 0
+            if evento == "Registrar Compra":
+                janela.close()
+                return 1
+            if evento == "Listar Compras":
+                janela.close()
+                return 2
+            if evento == "Alterar Compra":
+                janela.close()
+                return 3
+            if evento == "Deletar Compra":
+                janela.close()
+                return 4
+
     def mostra_tela_cadastro(self):
+        layout = [
+            [sg.Text("--- Registrar Compra ---", font=("Arial", 14, "bold"))],
+            [sg.Text("Chassi:", size=(15, 1)), sg.Input(key="chassi")],
+            [sg.Text("CNPJ Fornecedor:", size=(15, 1)), sg.Input(key="cnpj_fornecedor")],
+            [sg.Text("Valor:", size=(15, 1)), sg.Input(key="valor")],
+            [sg.Text("Data (dd/mm/aaaa):", size=(15, 1)), sg.Input(key="data")],
+            [sg.Button("Registrar"), sg.Button("Voltar")],
+        ]
+
+        janela = sg.Window("Registrar Compra", layout)
         while True:
-            print('\n--- Registrar compra ---')
-            print('\n(Deixe o chassi em branco para voltar)')
-            
-            chassi = self.le_num_inteiro("Chassi do veículo: ")
-            if not chassi:
+            evento, valores = janela.read()
+            if evento == sg.WINDOW_CLOSED or evento == "Voltar":
+                janela.close()
                 return None
-            
-            cnpj_fornecedor = input("CNPJ do fornecedor: ").strip()
-            if not cnpj_fornecedor:
-                return None
-            
-            valor = self.le_num_float("Valor da compra: ")
-            if not valor:
-                return None
-            
-            data = self.le_data("Data da compra (dd/mm/aaaa): ")
-            if not data:
-                return None
-            
-            dados = {
-                'chassi': chassi,
-                'cnpj_fornecedor': cnpj_fornecedor,
-                'valor': valor,
-                'data': data
-            }
-            
-            return dados
-    
+            if evento == "Registrar":
+                chassi_s = valores.get("chassi", "").strip()
+                if not chassi_s:
+                    sg.popup_error("Chassi é obrigatório")
+                    continue
+                try:
+                    chassi = int(chassi_s)
+                except ValueError:
+                    sg.popup_error("Chassi deve ser número inteiro")
+                    continue
+
+                cnpj = valores.get("cnpj_fornecedor", "").strip()
+                if not cnpj:
+                    sg.popup_error("CNPJ do fornecedor é obrigatório")
+                    continue
+
+                valor_s = valores.get("valor", "").strip()
+                try:
+                    valor = float(valor_s)
+                except ValueError:
+                    sg.popup_error("Valor inválido")
+                    continue
+
+                data = valores.get("data", "").strip()
+                if not data:
+                    sg.popup_error("Data é obrigatória")
+                    continue
+
+                janela.close()
+                return {"chassi": chassi, "cnpj_fornecedor": cnpj, "valor": valor, "data": data}
+
     def mostra_tela_lista(self, lista_compras):
-        print('\n--- Lista de compras ---')
         if not lista_compras:
-            self.mostra_mensagem("Nenhuma compra registrada.")
+            sg.popup_ok("Nenhuma compra registrada.")
             return
-        
-        for i, compra in enumerate(lista_compras):
-            print(compra.__str__())
-    
-    def mostra_tela_deletar(self):
-        print('\n--- Deletar compra ---')
-        print('\n(Deixe em branco para voltar)')
-        id_compra = self.le_num_inteiro('ID da compra que deseja deletar: ')
-        return id_compra if id_compra else None
-    
-    def mostra_tela_alteracao(self):
-        print('\n--- Alterar compra ---')
-        print('\n(Deixe o ID em branco para voltar)')
-        
+
+        compras_str = [c.__str__() for c in lista_compras]
+        layout = [[sg.Text("--- Lista de Compras ---", font=("Arial", 14, "bold"))], [sg.Listbox(values=compras_str, size=(90, 12), key="lista")], [sg.Button("Fechar")]]
+        janela = sg.Window("Lista de Compras", layout)
         while True:
-            id_compra = self.le_num_inteiro('ID da compra que deseja alterar: ')
-            if not id_compra:
+            evento, valores = janela.read()
+            if evento == sg.WINDOW_CLOSED or evento == "Fechar":
+                janela.close()
+                break
+
+    def mostra_tela_deletar(self):
+        layout = [[sg.Text("--- Deletar Compra ---", font=("Arial", 14, "bold"))], [sg.Text("ID da compra:", size=(15, 1)), sg.Input(key="id")], [sg.Button("Deletar"), sg.Button("Voltar")]]
+        janela = sg.Window("Deletar Compra", layout)
+        while True:
+            evento, valores = janela.read()
+            if evento == sg.WINDOW_CLOSED or evento == "Voltar":
+                janela.close()
                 return None
-            
-            if not self.__controlador.busca_compra_por_id(id_compra):
-                self.mostra_mensagem_erro("Não foi encontrada uma compra com este ID!")
-                continue
-            
-            while True:
-                print('\n(Deixe o valor em branco caso não queira alterar)')
-                chassi = self.le_num_inteiro("Novo chassi do veículo: ") or ' '
-                cnpj_fornecedor = input("Novo CNPJ do fornecedor: ").strip() or ' '
-                valor = self.le_num_float("Novo valor da compra: ") or ' '
-                data = self.le_data("Nova data da compra (dd/mm/aaaa): ") or ' '
-                
+            if evento == "Deletar":
+                id_s = valores.get("id", "").strip()
+                if not id_s:
+                    sg.popup_error("ID inválido")
+                    continue
+                try:
+                    idc = int(id_s)
+                except ValueError:
+                    sg.popup_error("ID deve ser inteiro")
+                    continue
+                janela.close()
+                return idc
+
+    def mostra_tela_alteracao(self):
+        layout_id = [[sg.Text('ID da compra que deseja alterar:'), sg.Input(key='id')], [sg.Button('Buscar'), sg.Button('Voltar')]]
+        janela_id = sg.Window('Buscar Compra', layout_id)
+        while True:
+            evento, valores = janela_id.read()
+            if evento == sg.WINDOW_CLOSED or evento == 'Voltar':
+                janela_id.close()
+                return None
+            if evento == 'Buscar':
+                id_s = valores.get('id','').strip()
+                if not id_s:
+                    sg.popup_error('ID inválido')
+                    continue
+                try:
+                    id_compra = int(id_s)
+                except ValueError:
+                    sg.popup_error('ID deve ser inteiro')
+                    continue
+                if not self.__controlador.busca_compra_por_id(id_compra):
+                    sg.popup_error('Não foi encontrada uma compra com este ID!')
+                    continue
+                janela_id.close()
+                break
+
+        layout = [
+            [sg.Text('--- Alterar Compra ---', font=('Arial',14,'bold'))],
+            [sg.Text('Novo chassi:', size=(15,1)), sg.Input(key='chassi')],
+            [sg.Text('Novo CNPJ fornecedor:', size=(15,1)), sg.Input(key='cnpj_fornecedor')],
+            [sg.Text('Novo valor:', size=(15,1)), sg.Input(key='valor')],
+            [sg.Text('Nova data (dd/mm/aaaa):', size=(15,1)), sg.Input(key='data')],
+            [sg.Button('Alterar'), sg.Button('Voltar')]
+        ]
+
+        janela = sg.Window('Alterar Compra', layout)
+        while True:
+            evento, valores = janela.read()
+            if evento == sg.WINDOW_CLOSED or evento == 'Voltar':
+                janela.close()
+                return None
+            if evento == 'Alterar':
                 dados = {
                     'id': id_compra,
-                    'chassi': chassi,
-                    'cnpj_fornecedor': cnpj_fornecedor,
-                    'valor': valor,
-                    'data': data
+                    'chassi': valores.get('chassi','').strip() or ' ',
+                    'cnpj_fornecedor': valores.get('cnpj_fornecedor','').strip() or ' ',
+                    'valor': valores.get('valor','').strip() or ' ',
+                    'data': valores.get('data','').strip() or ' '
                 }
-                
+                janela.close()
                 return dados
-    
-    def mostra_tela_busca_fornecedor(self):
-        print('\n--- Buscar compras por fornecedor ---')
-        print('\n(Deixe em branco para voltar)')
-        cnpj_fornecedor = input('CNPJ do fornecedor: ').strip()
-        return cnpj_fornecedor if cnpj_fornecedor else None
-    
-    def le_num_float(self, mensagem: str):
-        while True:
-            try:
-                entrada = input(mensagem).strip()
-                if not entrada:
-                    return None
-                return float(entrada)
-            except ValueError:
-                self.mostra_mensagem_erro("Valor inválido. Digite um número decimal.")
