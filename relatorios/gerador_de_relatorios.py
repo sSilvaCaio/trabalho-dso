@@ -31,8 +31,13 @@ class GeradorDeRelatorios:
 
     def processa_dados_compras_por_mes(self, loja, ano):
         contagem_compras = defaultdict(lambda: defaultdict(int))
-        
-        for transacao in loja.transacoes:
+        compras = []
+        try:
+            compras = loja.compra_dao.get_all()
+        except Exception:
+            compras = []
+
+        for transacao in compras:
             if isinstance(transacao, Compra) and transacao.data.year == ano:
                 chave_mes = transacao.data.strftime('%Y-%m')
                 contagem_compras[chave_mes]['quantidade'] += 1
@@ -42,8 +47,13 @@ class GeradorDeRelatorios:
     
     def processa_dados_vendas_por_mes(self, loja, ano):
         contagem_vendas = defaultdict(lambda: defaultdict(int))
-        
-        for transacao in loja.transacoes:
+        vendas = []
+        try:
+            vendas = loja.venda_dao.get_all()
+        except Exception:
+            vendas = []
+
+        for transacao in vendas:
             if isinstance(transacao, Venda) and transacao.data.year == ano:
                 chave_mes = transacao.data.strftime('%Y-%m')
                 contagem_vendas[chave_mes]['quantidade'] += 1
