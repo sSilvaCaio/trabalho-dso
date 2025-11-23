@@ -74,7 +74,7 @@ class ControladorCliente:
             if not cliente:
                 raise ClienteNaoEncontradoException(cpf)
             
-            removido_com_sucesso = self.deleta_cliente_por_objeto(cliente)
+            removido_com_sucesso = self.controlador_principal.loja.cliente_dao.remove(cpf)
             if removido_com_sucesso:
                 self.tela.mostra_mensagem('Cliente deletado.')
                 return True
@@ -101,15 +101,7 @@ class ControladorCliente:
             self.tela.mostra_mensagem('Cliente alterado.')
             return cliente
     
-    def deleta_cliente_por_objeto(self, cliente_para_deletar: Cliente):
-        if cliente_para_deletar and isinstance(cliente_para_deletar, Cliente):
-            self.controlador_principal.loja.cliente_dao.remove(cliente_para_deletar.cpf)
-            return True
-        return False
-    
     def busca_cliente_por_cpf(self, cpf):
-        clientes = self.controlador_principal.loja.cliente_dao.get_all()
-        for cliente in clientes:
-            if cliente.cpf == cpf:
-                return cliente
-        return None
+        if not isinstance(cpf, str):
+            return None
+        return self.controlador_principal.loja.cliente_dao.get(cpf)
