@@ -158,12 +158,31 @@ class TelaCompra(TelaAbstrata):
                 janela.close()
                 return None
             if evento == 'Alterar':
+                                chassi_s = valores.get('chassi','').strip()
+                chassi = ' '
+                if chassi_s:
+                    try:
+                        chassi = int(chassi_s)
+                    except ValueError:
+                        sg.popup_error('Chassi deve ser número inteiro')
+                        continue
+                
+                valor_s = valores.get('valor','').strip()
+                valor = ' '
+                if valor_s:
+                    try:
+                        valor = float(valor_s)
+                    except ValueError:
+                        sg.popup_error('Valor deve ser numérico')
+                        continue
+                
                 dados = {
                     'id': id_compra,
-                    'chassi': valores.get('chassi','').strip() or ' ',
+                    'chassi': chassi,
                     'cnpj_fornecedor': valores.get('cnpj_fornecedor','').strip() or ' ',
-                    'valor': valores.get('valor','').strip() or ' ',
+                    'valor': valor,
                     'data': valores.get('data','').strip() or ' '
                 }
                 janela.close()
                 return dados
+
