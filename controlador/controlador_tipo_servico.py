@@ -54,7 +54,8 @@ class ControladorTipoServico:
             if self.dao.add(novo_tipo):
                 self.tela.mostra_mensagem("Tipo de serviço " + nome + " foi adicionado")
                 return novo_tipo
-            return None
+            self.tela.mostra_mensagem_erro("Erro ao cadastrar tipo de serviço.")
+            return False
 
     def altera_tipo_servico(self):
         while True:
@@ -83,6 +84,7 @@ class ControladorTipoServico:
                     f"Nome do tipo de serviço {nome_atual} foi alterado para {novo_nome}"
                 )
                 return tipo_servico
+            self.tela.mostra_mensagem_erro("Erro ao alterar tipo de serviço.")
             return None
 
     def lista_tipos_servico(self):
@@ -107,4 +109,5 @@ class ControladorTipoServico:
             if self.dao.remove(tipo_servico.id):
                 self.tela.mostra_mensagem("Tipo de serviço " + nome + " deletado")
                 return True
+            self.tela.mostra_mensagem_erro("Erro ao deletar tipo de serviço.")
             return None

@@ -34,12 +34,12 @@ class ControladorCompra:
             if not dados_compra:
                 return None
             
-            veiculo = self.controlador_principal.controlador_veiculo.busca_veiculo_por_chassi(dados_compra['chassi'])
+            veiculo = self.controlador_principal.loja.veiculo_cadastrado_dao.get(dados_compra['chassi'])
             if not veiculo:
                 self.tela.mostra_mensagem_erro("Veículo não encontrado com este chassi.")
                 continue
             else:
-                estoque = self.controlador_principal.loja.veiculos_em_estoque_dao.get_all()
+                estoque = self.controlador_principal.loja.veiculo_em_estoque_dao.get_all()
                 if veiculo in estoque:
                     self.tela.mostra_mensagem_erro("Veículo já está no estoque")
                     continue
@@ -57,7 +57,7 @@ class ControladorCompra:
             )
             
             self.controlador_principal.loja.compra_dao.add(nova_compra)
-            self.controlador_principal.loja.veiculos_em_estoque_dao.add(veiculo.chassi, veiculo)
+            self.controlador_principal.loja.veiculo_em_estoque_dao.add(veiculo)
             
             self.tela.mostra_mensagem("Compra registrada com sucesso!")
             return nova_compra
@@ -82,7 +82,7 @@ class ControladorCompra:
                 continue
             
             if novos_dados['chassi'] != ' ':
-                veiculo = self.controlador_principal.controlador_veiculo.busca_veiculo_por_chassi(novos_dados['chassi'])
+                veiculo = self.controlador_principal.loja.veiculo_cadastrado_dao.get(novos_dados['chassi'])
                 if not veiculo:
                     self.tela.mostra_mensagem_erro("Veículo não encontrado com este chassi.")
                     continue
@@ -116,9 +116,9 @@ class ControladorCompra:
                 self.tela.mostra_mensagem_erro("Não existe compra com este ID.")
                 continue
             
-            estoque = self.controlador_principal.loja.veiculos_em_estoque_dao.get_all()
+            estoque = self.controlador_principal.loja.veiculo_em_estoque_dao.get_all()
             if compra.veiculo.chassi in [v.chassi for v in estoque]:
-                self.controlador_principal.loja.veiculos_em_estoque_dao.remove(compra.veiculo.chassi)
+                self.controlador_principal.loja.veiculo_em_estoque_dao.remove(compra.veiculo.chassi)
             
             removido_com_sucesso = self.deleta_compra_por_objeto(compra)
             if removido_com_sucesso:

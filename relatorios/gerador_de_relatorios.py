@@ -14,7 +14,7 @@ class GeradorDeRelatorios:
     
     def processa_dados_servicos_por_mes(self, loja):
         contagem_servicos = defaultdict(lambda: defaultdict(int))
-        for servico in loja.servicos_prestados:
+        for servico in loja.servico_dao.get_all():
             chave_mes = servico.data.strftime('%Y-%m')
             nome_servico = servico.tipo_servico.nome
             contagem_servicos[chave_mes][nome_servico] += 1
@@ -23,7 +23,7 @@ class GeradorDeRelatorios:
     
     def processa_dados_veiculos_em_estoque_por_marca(self, loja):
         contagem_veiculos = defaultdict(int)
-        for veiculo in loja.veiculos_em_estoque:
+        for veiculo in loja.veiculo_em_estoque_dao.get_all():
             nome_marca = veiculo.marca.nome
             contagem_veiculos[nome_marca] += 1
         

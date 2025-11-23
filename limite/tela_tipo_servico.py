@@ -101,7 +101,7 @@ class TelaTipoServico(TelaAbstrata):
 
     def mostra_tela_lista(self, lista_tipos_servico):
         if not lista_tipos_servico:
-            sg.popup_info("Nenhum tipo de serviço cadastrado!")
+            sg.popup_error("Nenhum tipo de serviço cadastrado!")
             return
 
         tipos_str = [

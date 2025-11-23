@@ -70,7 +70,7 @@ class TelaMarca(TelaAbstrata):
 
     def mostra_tela_lista(self, lista_marcas):
         if not lista_marcas:
-            sg.popup_info("Nenhuma marca cadastrada!")
+            sg.popup_error("Nenhuma marca cadastrada!")
             return
 
         # Converte lista de dicionários em strings para exibição

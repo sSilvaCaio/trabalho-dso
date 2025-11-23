@@ -1,5 +1,7 @@
 from entidade.marca import Marca
 from limite.tela_marca import TelaMarca
+from excecao.marca_ja_existe_exception import MarcaJaExisteException
+from excecao.marca_nao_encontrada_exception import MarcaNaoEncontradaException
 
 
 class ControladorMarca:
@@ -40,19 +42,23 @@ class ControladorMarca:
     def cadastra_marca(self):
         while True:
             nome = self.tela.mostra_tela_cadastro()
-
             if not nome:
                 return None
 
-            if self.dao.get_by_nome(nome):  # ← Busca por nome
-                self.tela.mostra_mensagem_erro("Já existe uma marca com esse nome")
-                continue
+            try:
+                if self.dao.get_by_nome(nome):
+                    raise MarcaJaExisteException(nome)
 
-            nova_marca = Marca(nome)
-            if self.dao.add(nova_marca):
-                self.tela.mostra_mensagem("Marca " + nome + " adicionada")
-                return nova_marca
-            return None
+                nova_marca = Marca(nome)
+                if self.dao.add(nova_marca):
+                    self.tela.mostra_mensagem("Marca " + nome + " adicionada")
+                    return nova_marca
+                self.tela.mostra_mensagem_erro("Erro ao adicionar marca.")
+                return None
+
+            except MarcaJaExisteException as e:
+                self.tela.mostra_mensagem_erro(str(e))
+                continue
 
     def altera_marca(self):
         while True:
@@ -61,27 +67,25 @@ class ControladorMarca:
             if not nome_atual or not novo_nome:
                 return None
 
-            marca = self.dao.get_by_nome(nome_atual)  # ← Busca por nome
+            try:
+                marca = self.dao.get_by_nome(nome_atual)
+                if not marca:
+                    raise MarcaNaoEncontradaException(nome_marca=nome_atual)
 
-            if not marca:
-                self.tela.mostra_mensagem_erro(
-                    "Não existe marca com o nome: " + nome_atual
-                )
+                if self.dao.get_by_nome(novo_nome):
+                    raise MarcaJaExisteException(novo_nome)
+
+                marca.nome = novo_nome
+                if self.dao.update(marca):
+                    self.tela.mostra_mensagem(
+                        f"Nome da marca {nome_atual} foi alterado para {novo_nome}"
+                    )
+                    return marca
+                return None
+
+            except (MarcaNaoEncontradaException, MarcaJaExisteException) as e:
+                self.tela.mostra_mensagem_erro(str(e))
                 continue
-
-            if self.dao.get_by_nome(novo_nome):
-                self.tela.mostra_mensagem_erro(
-                    "Já existe uma marca com o nome: " + novo_nome
-                )
-                continue
-
-            marca.nome = novo_nome
-            if self.dao.update(marca):  # ← Atualiza usando ID
-                self.tela.mostra_mensagem(
-                    f"Nome da marca {nome_atual} foi alterado para {novo_nome}"
-                )
-                return marca
-            return None
 
     def lista_marcas(self):
         marcas = self.dao.get_all()
@@ -95,13 +99,16 @@ class ControladorMarca:
             if not nome:
                 return None
 
-            marca = self.dao.get_by_nome(nome)
+            try:
+                marca = self.dao.get_by_nome(nome)
+                if not marca:
+                    raise MarcaNaoEncontradaException(nome_marca=nome)
 
-            if not marca:
-                self.tela.mostra_mensagem_erro("Não existe marca com este nome.")
+                if self.dao.remove(marca.id):
+                    self.tela.mostra_mensagem("Marca " + nome + " deletada")
+                    return True
+                return None
+
+            except MarcaNaoEncontradaException as e:
+                self.tela.mostra_mensagem_erro(str(e))
                 continue
-
-            if self.dao.remove(marca.id):
-                self.tela.mostra_mensagem("Marca " + nome + " deletada")
-                return True
-            return None

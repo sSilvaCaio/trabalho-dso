@@ -34,12 +34,12 @@ class ControladorVenda:
             if not dados_venda:
                 return None
             
-            veiculo = self.controlador_principal.controlador_veiculo.busca_veiculo_por_chassi(dados_venda['chassi'])
+            veiculo = self.controlador_principal.loja.veiculo_cadastrado_dao.get(dados_venda['chassi'])
             if not veiculo:
                 self.tela.mostra_mensagem_erro("Veículo não encontrado com este chassi.")
                 continue
             
-            estoque = self.controlador_principal.loja.veiculos_em_estoque_dao.get_all()
+            estoque = self.controlador_principal.loja.veiculo_em_estoque_dao.get_all()
             if veiculo not in estoque:
                 self.tela.mostra_mensagem_erro("Veículo não está no estoque.")
                 continue
@@ -57,7 +57,7 @@ class ControladorVenda:
             )
             
             self.controlador_principal.loja.venda_dao.add(nova_venda)
-            self.controlador_principal.loja.veiculos_em_estoque_dao.remove(veiculo.chassi)
+            self.controlador_principal.loja.veiculo_em_estoque_dao.remove(veiculo.chassi)
             
             self.tela.mostra_mensagem("Venda registrada com sucesso!")
             return nova_venda
@@ -84,21 +84,21 @@ class ControladorVenda:
             veiculo_antigo = venda.veiculo
             
             if novos_dados['chassi'] != ' ':
-                veiculo = self.controlador_principal.controlador_veiculo.busca_veiculo_por_chassi(novos_dados['chassi'])
+                veiculo = self.controlador_principal.loja.veiculo_cadastrado_dao.get(novos_dados['chassi'])
                 if not veiculo:
                     self.tela.mostra_mensagem_erro("Veículo não encontrado com este chassi.")
                     continue
                 
-                estoque = self.controlador_principal.loja.veiculos_em_estoque_dao.get_all()
+                estoque = self.controlador_principal.loja.veiculo_em_estoque_dao.get_all()
                 if veiculo not in estoque:
                     self.tela.mostra_mensagem_erro("Veículo não está no estoque.")
                     continue
                 
-                estoque = self.controlador_principal.loja.veiculos_em_estoque_dao.get_all()
+                estoque = self.controlador_principal.loja.veiculo_em_estoque_dao.get_all()
                 if veiculo_antigo.chassi not in [v.chassi for v in estoque]:
-                    self.controlador_principal.loja.veiculos_em_estoque_dao.add(veiculo_antigo.chassi, veiculo_antigo)
+                    self.controlador_principal.loja.veiculo_em_estoque_dao.add(veiculo_antigo)
 
-                self.controlador_principal.loja.veiculos_em_estoque_dao.remove(veiculo.chassi)
+                self.controlador_principal.loja.veiculo_em_estoque_dao.remove(veiculo.chassi)
                 venda.veiculo = veiculo
             
             if novos_dados['cpf_cliente'] != ' ':
@@ -129,9 +129,9 @@ class ControladorVenda:
                 self.tela.mostra_mensagem_erro("Não existe venda com este ID.")
                 continue
             
-            estoque = self.controlador_principal.loja.veiculos_em_estoque_dao.get_all()
+            estoque = self.controlador_principal.loja.veiculo_em_estoque_dao.get_all()
             if venda.veiculo.chassi not in [v.chassi for v in estoque]:
-                self.controlador_principal.loja.veiculos_em_estoque_dao.add(venda.veiculo.chassi, venda.veiculo)
+                self.controlador_principal.loja.veiculo_em_estoque_dao.add(venda.veiculo)
             
             removido_com_sucesso = self.deleta_venda_por_objeto(venda)
             if removido_com_sucesso:

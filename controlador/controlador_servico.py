@@ -147,7 +147,7 @@ class ControladorServico:
             id = self.tela.mostra_tela_deletar()
 
             if not id:
-                return None
+                return False
 
             servico_para_deletar = self.dao.get(id)
 
