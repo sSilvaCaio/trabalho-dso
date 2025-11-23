@@ -1,5 +1,7 @@
 from entidade.cliente import Cliente
 from limite.tela_cliente import TelaCliente
+from excecao.cliente_ja_existe_exception import ClienteJaExisteException
+from excecao.cliente_nao_encontrado_exception import ClienteNaoEncontradoException
 
 class ControladorCliente:
     def __init__(self, controlador_principal):
@@ -35,8 +37,7 @@ class ControladorCliente:
                 return None
             
             if self.busca_cliente_por_cpf(dados_cliente['cpf']):
-                self.tela.mostra_mensagem_erro("Já existe um cliente com este CPF!")
-                continue
+                raise ClienteJaExisteException(dados_cliente['cpf'])
             
             novo_cliente = Cliente(
                 nome=dados_cliente["nome"],
@@ -71,8 +72,7 @@ class ControladorCliente:
             
             cliente = self.busca_cliente_por_cpf(cpf)
             if not cliente:
-                self.tela.mostra_mensagem_erro("Não existe cliente com este CPF.")
-                continue
+                raise ClienteNaoEncontradoException(cpf)
             
             removido_com_sucesso = self.deleta_cliente_por_objeto(cliente)
             if removido_com_sucesso:
@@ -90,8 +90,7 @@ class ControladorCliente:
             
             cliente = self.busca_cliente_por_cpf(novos_dados['cpf'])
             if not cliente:
-                self.tela.mostra_mensagem_erro('Não existe cliente com este CPF.')
-                continue
+                raise ClienteNaoEncontradoException(novos_dados['cpf'])
             
             if novos_dados['nome'] != ' ': cliente.nome = novos_dados["nome"]
             if novos_dados['telefone'] != ' ': cliente.telefone = novos_dados["telefone"]
