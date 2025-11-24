@@ -20,3 +20,6 @@ class FornecedorDAO(BaseDAO):
     def remove(self, key: str):
         if isinstance(key, str):
             return super().remove(key)
+                
+    def get_all(self):
+        return super().get_all()
