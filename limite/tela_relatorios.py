@@ -98,4 +98,39 @@ class TelaRelatorios(TelaAbstrata):
             texto.append(f"   - Quantidade: {quantidade} {plural}")
             texto.append(f"   - Valor Total: R$ {valor_total:.2f}")
 
-        sg.popup_scrolled("\n".join(texto), title="Vendas por Mês", size=(70, 18))
+        sg.popup_scrolled("\n".join(texto), title="Vendas por Mês", size=(70, 18)) 
+
+    def solicita_ano(self):
+        layout = [
+            [sg.Text("Informe o ano para o relatório:", font=("Arial", 12))],
+            [sg.Input(key="ano", size=(20, 1), justification="center")],
+            [sg.Button("Confirmar", size=(10, 1)), sg.Button("Cancelar", size=(10, 1))],
+        ]
+
+        janela = sg.Window("Ano do Relatório", layout, modal=True, finalize=True)
+        janela["ano"].set_focus()
+
+        while True:
+            evento, valores = janela.read()
+            
+            if evento == sg.WINDOW_CLOSED or evento == "Cancelar":
+                janela.close()
+                return None
+
+            if evento == "Confirmar":
+                ano_str = valores.get("ano", "").strip()
+                
+                if not ano_str:
+                    sg.popup_error("Por favor, informe um ano.")
+                    continue
+                
+                try:
+                    ano = int(ano_str)
+                    if ano < 1900 or ano > 2100:
+                        sg.popup_error("Por favor, informe um ano válido (entre 1900 e 2100).")
+                        continue
+                    janela.close()
+                    return ano
+                except ValueError:
+                    sg.popup_error("Por favor, informe um ano válido (número inteiro).")
+                    continue
