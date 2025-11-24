@@ -1,5 +1,6 @@
 from .tela_abstrata import TelaAbstrata
 import FreeSimpleGUI as sg
+from datetime import datetime
 
 
 class TelaCompra(TelaAbstrata):
@@ -79,9 +80,15 @@ class TelaCompra(TelaAbstrata):
                 if not data:
                     sg.popup_error("Data é obrigatória")
                     continue
+                
+                try:
+                    data_obj = datetime.strptime(data, "%d/%m/%Y")
+                except ValueError:
+                    sg.popup_error("Data inválida. Use o formato dd/mm/aaaa")
+                    continue
 
                 janela.close()
-                return {"chassi": chassi, "cnpj_fornecedor": cnpj, "valor": valor, "data": data}
+                return {"chassi": chassi, "cnpj_fornecedor": cnpj, "valor": valor, "data": data_obj}
 
     def mostra_tela_lista(self, lista_compras):
         if not lista_compras:
@@ -176,12 +183,21 @@ class TelaCompra(TelaAbstrata):
                         sg.popup_error('Valor deve ser numérico')
                         continue
                 
+                data_s = valores.get('data','').strip()
+                data = ' '
+                if data_s:
+                    try:
+                        data = datetime.strptime(data_s, "%d/%m/%Y")
+                    except ValueError:
+                        sg.popup_error('Data inválida. Use o formato dd/mm/aaaa')
+                        continue
+                
                 dados = {
                     'id': id_compra,
                     'chassi': chassi,
                     'cnpj_fornecedor': valores.get('cnpj_fornecedor','').strip() or ' ',
                     'valor': valor,
-                    'data': valores.get('data','').strip() or ' '
+                    'data': data
                 }
                 janela.close()
                 return dados
