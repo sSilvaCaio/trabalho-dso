@@ -158,7 +158,7 @@ class TelaCompra(TelaAbstrata):
                 janela.close()
                 return None
             if evento == 'Alterar':
-                                chassi_s = valores.get('chassi','').strip()
+                chassi_s = valores.get('chassi','').strip()
                 chassi = ' '
                 if chassi_s:
                     try:
