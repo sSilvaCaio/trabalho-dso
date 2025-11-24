@@ -69,13 +69,9 @@ class ControladorFornecedor:
                 self.tela.mostra_mensagem_erro("Não existe fornecedor com este CNPJ.")
                 continue
             
-            removido_com_sucesso = self.deleta_fornecedor_por_objeto(fornecedor)
-            if removido_com_sucesso:
-                self.tela.mostra_mensagem('Fornecedor deletado.')
-                return True
-            else:
-                self.tela.mostra_mensagem_erro('Erro ao deletar fornecedor.')
-                return False
+            self.controlador_principal.loja.fornecedor_dao.remove(cnpj)
+            self.tela.mostra_mensagem('Fornecedor deletado.')
+            return True
     
     def altera_fornecedor(self):
         while True:
@@ -96,12 +92,6 @@ class ControladorFornecedor:
             self.controlador_principal.loja.fornecedor_dao.update(fornecedor)
             self.tela.mostra_mensagem('Fornecedor alterado.')
             return fornecedor
-    
-    def deleta_fornecedor_por_objeto(self, fornecedor_para_deletar: Fornecedor):
-        if fornecedor_para_deletar and isinstance(fornecedor_para_deletar, Fornecedor):
-            self.controlador_principal.loja.fornecedor_dao.remove(fornecedor_para_deletar.cnpj)
-            return True
-        return False
     
     def busca_fornecedor_por_cnpj(self, cnpj):
         fornecedores = self.controlador_principal.loja.fornecedor_dao.get_all()
