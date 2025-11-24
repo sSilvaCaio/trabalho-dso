@@ -120,19 +120,9 @@ class ControladorCompra:
             if compra.veiculo.chassi in [v.chassi for v in estoque]:
                 self.controlador_principal.loja.veiculo_em_estoque_dao.remove(compra.veiculo.chassi)
             
-            removido_com_sucesso = self.deleta_compra_por_objeto(compra)
-            if removido_com_sucesso:
-                self.tela.mostra_mensagem('Compra deletada e veículo removido do estoque.')
-                return True
-            else:
-                self.tela.mostra_mensagem_erro('Erro ao deletar compra.')
-                return False
-    
-    def deleta_compra_por_objeto(self, compra_para_deletar: Compra):
-        if compra_para_deletar and isinstance(compra_para_deletar, Compra):
-            self.controlador_principal.loja.compra_dao.remove(compra_para_deletar.id)
+            self.controlador_principal.loja.compra_dao.remove(id_compra)
+            self.tela.mostra_mensagem('Compra deletada e veículo removido do estoque.')
             return True
-        return False
     
     def busca_compra_por_id(self, id_compra):
         if not id_compra:
