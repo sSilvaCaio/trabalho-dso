@@ -5,7 +5,7 @@ class ControladorVenda:
     def __init__(self, controlador_principal):
         self.__tela = TelaVenda(self)
         self.__controlador_principal = controlador_principal
-    
+
     @property
     def tela(self):
         return self.__tela
@@ -133,19 +133,9 @@ class ControladorVenda:
             if venda.veiculo.chassi not in [v.chassi for v in estoque]:
                 self.controlador_principal.loja.veiculo_em_estoque_dao.add(venda.veiculo)
             
-            removido_com_sucesso = self.deleta_venda_por_objeto(venda)
-            if removido_com_sucesso:
-                self.tela.mostra_mensagem('Venda deletada e veículo devolvido ao estoque.')
-                return True
-            else:
-                self.tela.mostra_mensagem_erro('Erro ao deletar venda.')
-                return False
-    
-    def deleta_venda_por_objeto(self, venda_para_deletar: Venda):
-        if venda_para_deletar and isinstance(venda_para_deletar, Venda):
-            self.controlador_principal.loja.venda_dao.remove(venda_para_deletar.id)
+            self.controlador_principal.loja.venda_dao.remove(id_venda)
+            self.tela.mostra_mensagem('Venda deletada e veículo devolvido ao estoque.')
             return True
-        return False
     
     def busca_venda_por_id(self, id_venda):
         if not id_venda:
