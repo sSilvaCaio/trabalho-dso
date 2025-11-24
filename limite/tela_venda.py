@@ -1,5 +1,6 @@
 from .tela_abstrata import TelaAbstrata
 import FreeSimpleGUI as sg
+from datetime import datetime
 
 
 class TelaVenda(TelaAbstrata):
@@ -79,9 +80,15 @@ class TelaVenda(TelaAbstrata):
                 if not data:
                     sg.popup_error("Data é obrigatória")
                     continue
+                
+                try:
+                    data_obj = datetime.strptime(data, "%d/%m/%Y")
+                except ValueError:
+                    sg.popup_error("Data inválida. Use o formato dd/mm/aaaa")
+                    continue
 
                 janela.close()
-                return {"chassi": chassi, "cpf_cliente": cpf, "valor": valor, "data": data}
+                return {"chassi": chassi, "cpf_cliente": cpf, "valor": valor, "data": data_obj}
 
     def mostra_tela_lista(self, lista_vendas):
         if not lista_vendas:
@@ -158,12 +165,21 @@ class TelaVenda(TelaAbstrata):
                 janela.close()
                 return None
             if evento == 'Alterar':
+                data_s = valores.get('data','').strip()
+                data = ' '
+                if data_s:
+                    try:
+                        data = datetime.strptime(data_s, "%d/%m/%Y")
+                    except ValueError:
+                        sg.popup_error('Data inválida. Use o formato dd/mm/aaaa')
+                        continue
+                
                 dados = {
                     'id': id_venda,
                     'chassi': valores.get('chassi','').strip() or ' ',
                     'cpf_cliente': valores.get('cpf_cliente','').strip() or ' ',
                     'valor': valores.get('valor','').strip() or ' ',
-                    'data': valores.get('data','').strip() or ' '
+                    'data': data
                 }
                 janela.close()
                 return dados
@@ -183,3 +199,4 @@ class TelaVenda(TelaAbstrata):
                     continue
                 janela.close()
                 return cpf
+
