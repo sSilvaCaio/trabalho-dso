@@ -20,3 +20,6 @@ class VendaDAO(BaseDAO):
     def remove(self, key: int):
         if isinstance(key, int):
             return super().remove(key)
+                
+    def get_all(self):
+        return super().get_all()
